@@ -11,13 +11,11 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "conta")
-public class Conta {
+@Table(name = "operacao")
+public class OperacaoEntidade {
 
-    private Long id;
-    private String agencia;
-    private double numeroDaConta;
-    private double tipoDaConta;
-    private double digitoVerificador;
-    private String clienteCpf;
+    private float saldo;
+    private float extrato;
+    private float saque;
+    private float transferencia;
 }
