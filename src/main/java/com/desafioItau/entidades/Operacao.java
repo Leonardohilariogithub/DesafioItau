@@ -11,6 +11,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "conta")
+@Table(name = "operacao")
 public class Operacao {
 }
