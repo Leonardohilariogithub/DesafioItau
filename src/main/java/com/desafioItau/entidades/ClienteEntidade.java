@@ -5,30 +5,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cliente")
-public class ClienteEntidade {
+@Table(name = "tb_cliente")
+public class ClienteEntidade implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)// Gerar automaticamente
+    private Long id; // UUID - identificador Universal indicado para projeto Microservices
 
-    @Column(nullable = false, length = 35)
+    @Column(length = 35)
     private String nome;
 
-    @Column(nullable = false,unique = true, length = 11)
+    @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Column(nullable = false,unique = true, length = 35)
-    private double telefone;
+    @Column(nullable = false)
+    private String telefone;
 
     @Column(nullable = false, length = 35)
-    private String endereço;
+    private String endereco;
 
     @Column(nullable = false)
-    private LocalDateTime registro;
+    private LocalDateTime registro;// regra que vou colocar
+
+    public ClienteEntidade(String nome, String cpf, String telefone, String endereco) {
+        this.id = id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.telefone = telefone;
+        this.endereco = endereco;
+    }
 }

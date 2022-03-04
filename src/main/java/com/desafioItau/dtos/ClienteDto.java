@@ -1,23 +1,29 @@
 package com.desafioItau.dtos;
 
+import com.desafioItau.entidades.ClienteEntidade;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteDto {
 
-    @NotBlank
+    @NotBlank  // Anotaçoes da dependecia Validation
     private String nome;
-
     @NotBlank @Size(max = 11)
     private String cpf;
-
     @NotBlank
-    private double telefone;
-
+    private String telefone;
     @NotBlank
-    private String endereço;
+    private String endereco;
+
+    public ClienteEntidade transformaParaObjeto() {
+        return new ClienteEntidade(nome, cpf, telefone, endereco);
+    }
+
 }
