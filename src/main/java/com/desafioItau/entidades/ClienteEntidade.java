@@ -3,7 +3,6 @@ package com.desafioItau.entidades;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -34,7 +33,7 @@ public class ClienteEntidade implements Serializable {
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 
-    public ClienteEntidade(String nome, String cpf, String telefone, String endereco) {
+    public ClienteEntidade(String nome, String cpf, String telefone, String endereco) {   //POST
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;

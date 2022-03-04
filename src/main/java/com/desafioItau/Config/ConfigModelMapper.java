@@ -1,11 +1,11 @@
-package com.desafioItau.ConfigModelMapper;
+package com.desafioItau.Config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class config {
+public class ConfigModelMapper {
 
     @Bean
     public ModelMapper modelMapper() {

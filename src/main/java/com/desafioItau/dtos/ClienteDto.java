@@ -4,7 +4,6 @@ import com.desafioItau.entidades.ClienteEntidade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -22,7 +21,7 @@ public class ClienteDto {
     @NotBlank
     private String endereco;
 
-    public ClienteEntidade transformaParaObjeto() {
+    public ClienteEntidade transformaParaObjeto() { //POST
         return new ClienteEntidade(nome, cpf, telefone, endereco);
     }
 
