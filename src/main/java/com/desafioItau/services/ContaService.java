@@ -1,7 +1,6 @@
 package com.desafioItau.services;
 
 import com.desafioItau.dtos.ContaDto;
-import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.repositorys.ContaRepository;
 import lombok.RequiredArgsConstructor;

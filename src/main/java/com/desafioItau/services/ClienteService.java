@@ -2,21 +2,16 @@ package com.desafioItau.services;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
-import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -67,8 +62,6 @@ public class ClienteService {
     public void deletarCliente(ClienteEntidade clienteEntidade) {
         clienteRepository.delete(clienteEntidade);
     }
-
-
 
 //    public ClienteEntidade save(ClienteEntidade clienteEntidade) {
 //        return clienteRepository.save(clienteEntidade);
