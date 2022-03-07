@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository; //Utilizar metodos prontos do JPA
+    private final ClienteRepository clienteRepository; //Utilizar metodos prontos do JPARepository
 
     @Transactional
     public ClienteEntidade criarCliente(ClienteDto clienteDto){
