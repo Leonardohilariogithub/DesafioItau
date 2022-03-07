@@ -41,7 +41,7 @@ public class ContaService {
     public ContaEntidade atualizar(Long id, ContaEntidade contaAtualizada) {  // Setando atributo ID e registro automaticos
         ContaEntidade conta = contaRepository.getById(id);
         contaAtualizada.setId(conta.getId());
-        contaAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+        contaAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC"))); // .setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return contaRepository.save(contaAtualizada);
     }
 

@@ -2,15 +2,21 @@ package com.desafioItau.services;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
+import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -18,16 +24,18 @@ import java.util.Optional;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository; //Utilizar metodos prontos do JPARepository
+    private final ModelMapper modelMapper;
 
     @Transactional
-    public ClienteEntidade criarCliente(ClienteDto clienteDto){
+    public  ClienteEntidade  criarCliente ( ClienteDto  clienteDto ){
         ClienteEntidade clienteEntidade = clienteDto.transformaParaObjeto();
-        clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+        clienteEntidade.setRegistro( LocalDateTime.now(ZoneId.of("UTC")));
         return clienteRepository.save(clienteEntidade);
     }
     public boolean existsByCpf(String cpf) {
         return clienteRepository.existsByCpf(cpf);
     }
+
 
     public Page<ClienteEntidade> findAll(Pageable pageable) { //listar
         return clienteRepository.findAll(pageable);
@@ -59,6 +67,7 @@ public class ClienteService {
     public void deletarCliente(ClienteEntidade clienteEntidade) {
         clienteRepository.delete(clienteEntidade);
     }
+
 
 
 //    public ClienteEntidade save(ClienteEntidade clienteEntidade) {

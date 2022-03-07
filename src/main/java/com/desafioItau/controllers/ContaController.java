@@ -42,11 +42,18 @@ public class ContaController {
     }
 
     @PutMapping("/atualizar/{id}")
-    public ResponseEntity<Object> atualizarConta(@RequestBody @Valid ContaDto contaDto, Long id){
-       Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
-       var contaEntidade = contaService.atualizar(id, modelMapper.map(contaDto,ContaEntidade.class));
-       return ResponseEntity.created(null).body(contaEntidadeOptional.get());
+    public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "id") Long id){
+        ContaEntidade conta = new ContaEntidade();
+        BeanUtils.copyProperties(contaDto, conta);
+        contaService.atualizar(id, conta);
+        return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
+    
+//    public ResponseEntity<Object> atualizarConta(@RequestBody @Valid ContaDto contaDto, Long id){
+//       Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
+//       var contaEntidade = contaService.atualizar(id, modelMapper.map(contaDto,ContaEntidade.class));
+//       return ResponseEntity.ok(null).body(contaEntidadeOptional.get());
+//    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deletarConta(@PathVariable Long id){
