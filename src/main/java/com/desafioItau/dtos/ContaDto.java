@@ -1,6 +1,5 @@
 package com.desafioItau.dtos;
 
-import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
 import lombok.AllArgsConstructor;
 import lombok.Data;

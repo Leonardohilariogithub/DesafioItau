@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class ContaController {
     public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "id") Long id){
         ContaEntidade conta = new ContaEntidade();
         BeanUtils.copyProperties(contaDto, conta);
-        contaService.atualizar(id, conta);
+        contaService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
     
