@@ -46,7 +46,7 @@ public class ContaController {
     public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "id") Long id){
         ContaEntidade conta = new ContaEntidade();
         BeanUtils.copyProperties(contaDto, conta);
-        contaService.atualizar(id, conta);
+        contaService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
     

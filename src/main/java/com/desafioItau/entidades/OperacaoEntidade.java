@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class OperacaoEntidade implements Serializable {
 
     private String numeroDaConta;
     private String numeroDaContaDestino;
-    private bigDecimal valorDaTransação;
-    private bigDecimal taxa;
-    private bigDecimal saldo;
+    private BigDecimal valorDaTransação;
+    private BigDecimal taxa;
+    private BigDecimal saldo;
 }
