@@ -21,7 +21,7 @@ public class ClienteService {
     private final ClienteRepository clienteRepository; //Utilizar metodos prontos do JPARepository
     private final ModelMapper modelMapper;
 
-    @Transactional
+    @Transactional// evita dados quebrados
     public  ClienteEntidade  criarCliente ( ClienteDto  clienteDto ){
         ClienteEntidade clienteEntidade = clienteDto.transformaParaObjeto();
         clienteEntidade.setRegistro( LocalDateTime.now(ZoneId.of("UTC")));
