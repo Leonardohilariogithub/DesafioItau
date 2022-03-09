@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,14 @@ public class OperacaoService {
 
     public List<OperacaoEntidade> findAll() {
         return operacaoRepository.findAll();
+    }
+
+    public Optional<OperacaoEntidade> findById(Long id) {
+        return operacaoRepository.findById(id);
+    }
+
+    @Transactional// evita dados quebrados
+    public void delete(OperacaoEntidade operacaoEntidade) {
+        operacaoRepository.delete(operacaoEntidade);
     }
 }

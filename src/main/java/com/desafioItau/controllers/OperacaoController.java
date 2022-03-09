@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)//pemitir acessar de qualquer fonte
@@ -35,5 +36,16 @@ public class OperacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(operacaoService.findAll());
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<Object>obterOperacao(@PathVariable Long id){
+        Optional<OperacaoEntidade> operacaoObtida = operacaoService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(operacaoObtida.get());
+    }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deletarOperacao(@PathVariable Long id){
+        Optional<OperacaoEntidade> operacaoDeletada = operacaoService.findById(id);
+        operacaoService.delete(operacaoDeletada.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Operação Deletada");
+    }
 }
