@@ -50,7 +50,7 @@ public class OperacaoController {
     }
 
     @PutMapping("/atualizar/{id}")
-    public ResponseEntity<Object> atualizarOperacao(@PathVariable @RequestParam(name = "id") Long id, @RequestBody @Valid OperacaoDto operacaoDto){
+    public ResponseEntity<Object> atualizarOperacao(@PathVariable @RequestParam(value = "id") Long id, @RequestBody @Valid OperacaoDto operacaoDto){
         OperacaoEntidade conta = new OperacaoEntidade();
         BeanUtils.copyProperties(operacaoDto, conta);
         operacaoService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
