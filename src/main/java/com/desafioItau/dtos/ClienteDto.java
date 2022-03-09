@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +14,7 @@ public class ClienteDto {
 
     @NotBlank  // Anotaçoes da dependecia Validation
     private String nome;
-    @NotBlank @Size(max = 11)
+    @NotBlank 
     private String cpf;
     @NotBlank
     private String telefone;

@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_operacao")
 public class OperacaoEntidade implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,7 @@ public class OperacaoEntidade implements Serializable {
     private String numeroDaContaDestino;
 
 //    @Enumerated(EnumType.STRING)
-//    private EnumOperacao tipoDaOperacao;
+//    private EnumOperacao tipoDaOperacao;        //TRANSFERENCIA(1),SAQUE(2), DEPOSITO(3);
 
     private BigDecimal valorDaTransação;
     private BigDecimal taxa;
