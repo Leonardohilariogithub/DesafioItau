@@ -49,12 +49,6 @@ public class ContaController {
         contaService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
-    
-//    public ResponseEntity<Object> atualizarConta(@RequestBody @Valid ContaDto contaDto, Long id){
-//       Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
-//       var contaEntidade = contaService.atualizar(id, modelMapper.map(contaDto,ContaEntidade.class));
-//       return ResponseEntity.ok(null).body(contaEntidadeOptional.get());
-//    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deletarConta(@PathVariable Long id){

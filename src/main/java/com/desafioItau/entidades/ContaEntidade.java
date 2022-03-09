@@ -18,22 +18,16 @@ public class ContaEntidade implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String agencia;
-
     @Column(nullable = false)
     private String numeroDaConta;
-
     @Column(nullable = false)
     private String tipoDaConta;
-
     @Column(nullable = false)
     private String digitoVerificador;
-
     @Column(nullable = false)
     private String clienteCpf;
-
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 

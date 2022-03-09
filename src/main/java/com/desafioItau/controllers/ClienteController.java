@@ -42,12 +42,6 @@ public class ClienteController{
         return ResponseEntity.status(HttpStatus.OK).body(clienteService.findAll(pageable));
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<ClienteEntidade>> listarCliente(){
-//        List<ClienteEntidade> listarCliente = clienteService.listar();
-//        return ResponseEntity.ok(listarCliente);
-//    }
-
     @GetMapping("{id}")
     public ResponseEntity<Object> obterCliente(@PathVariable Long id){
         Optional<ClienteEntidade> clienteEntidadeOptional = clienteService.findById(id);

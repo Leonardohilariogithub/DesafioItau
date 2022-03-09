@@ -18,19 +18,14 @@ public class ClienteEntidade implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)// Gerar automaticamente
     private Long id; // UUID - identificador Universal indicado para projeto Microservices
-
     @Column(length = 35)
     private String nome;
-
     @Column(nullable = false, unique = true, length = 11)
     private String cpf;
-
     @Column(nullable = false)
     private String telefone;
-
     @Column(nullable = false, length = 35)
     private String endereco;
-
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 

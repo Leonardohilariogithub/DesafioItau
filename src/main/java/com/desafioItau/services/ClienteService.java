@@ -47,13 +47,6 @@ public class ClienteService {
         return clienteRepository.save(clienteAtualizado);
     }
 
-//    private void update(ClienteEntidade cliente) { // Outra maneira de fazer PUT
-//        cliente.setNome(cliente.getNome());
-//        cliente.setCpf(cliente.getCpf());
-//        cliente.setTelefone(cliente.getTelefone());
-//        cliente.setEndereco(cliente.getEndereco());
-//    }
-
     public Optional<ClienteEntidade> findById(Long id) {
         return clienteRepository.findById(id);
     }
@@ -63,7 +56,4 @@ public class ClienteService {
         clienteRepository.delete(clienteEntidade);
     }
 
-//    public ClienteEntidade save(ClienteEntidade clienteEntidade) {
-//        return clienteRepository.save(clienteEntidade);
-//    }
 }

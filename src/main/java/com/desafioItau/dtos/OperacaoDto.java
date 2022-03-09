@@ -11,19 +11,14 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OperacaoDto {
 
-
     private String numeroDaConta;
-
     private String numeroDaContaDestino;
 
     //@Enumerated(EnumType.STRING)
     //private EnumOperacao tipoDaOperacao;
 
-
     private BigDecimal valorDaTransação;
-
     private BigDecimal taxa;
-
     private BigDecimal saldo;
 
 
