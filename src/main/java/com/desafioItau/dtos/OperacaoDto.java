@@ -1,12 +1,10 @@
 package com.desafioItau.dtos;
 
-import com.desafioItau.entidades.OperacaoEntidade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
