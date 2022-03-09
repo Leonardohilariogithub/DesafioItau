@@ -14,26 +14,21 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_conta")
 public class ContaEntidade implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String agencia;
-
     @Column(nullable = false)
     private String numeroDaConta;
-
     @Column(nullable = false)
     private String tipoDaConta;
-
     @Column(nullable = false)
     private String digitoVerificador;
-
     @Column(nullable = false)
     private String clienteCpf;
-
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 

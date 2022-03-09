@@ -18,7 +18,7 @@ public class ContaService {
 
     private final ContaRepository contaRepository;  //Utilizar metodos prontos do JPARepository
 
-    @Transactional
+    @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) {
         ContaEntidade contaEntidade = contaDto.transformaParaObjeto2();
         contaEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));

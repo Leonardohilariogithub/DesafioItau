@@ -14,16 +14,12 @@ public class ContaDto {
 
     @NotBlank
     private String agencia;
-
     @NotBlank
     private String numeroDaConta;
-
     @NotBlank
     private String tipoDaConta;
-
     @NotBlank
     private String digitoVerificador;
-
     @NotBlank
     private String clienteCpf;
 
