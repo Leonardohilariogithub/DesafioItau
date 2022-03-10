@@ -1,12 +1,13 @@
 package com.desafioItau.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +23,6 @@ public class ClienteEntidade implements Serializable {
     @Column(length = 35)
     private String nome;
 
-    @Column(nullable = false)
     private String cpf;
 
     @Column(nullable = false)
@@ -33,6 +33,10 @@ public class ClienteEntidade implements Serializable {
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 
+    @JsonIgnore
+    @OneToMany
+    private List<ContaEntidade> listaDeContas;
+
     public ClienteEntidade(String nome, String cpf, String telefone, String endereco) {  //POST
         this.id = id;
         this.nome = nome;
@@ -40,4 +44,5 @@ public class ClienteEntidade implements Serializable {
         this.telefone = telefone;
         this.endereco = endereco;
     }
+
 }

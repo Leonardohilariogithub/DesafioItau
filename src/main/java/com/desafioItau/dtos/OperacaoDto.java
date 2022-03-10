@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OperacaoDto {
 
+    private Long id;
+
     private String numeroDaConta;
     private String numeroDaContaDestino;
 

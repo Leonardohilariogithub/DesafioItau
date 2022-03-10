@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,8 +23,8 @@ public class ClienteService {
 
     @Transactional// evita dados quebrados
     public  ClienteEntidade  criarCliente ( ClienteDto  clienteDto ){
-        ClienteEntidade clienteEntidade = clienteDto.transformaParaObjeto();
-        clienteEntidade.setRegistro( LocalDateTime.now(ZoneId.of("UTC")));
+        ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
+        clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return clienteRepository.save(clienteEntidade);
     }
     public boolean existsByCpf(String cpf) {

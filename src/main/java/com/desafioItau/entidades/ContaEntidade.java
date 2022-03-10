@@ -19,6 +19,11 @@ public class ContaEntidade implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "tb_cliente_id")
+    private ClienteEntidade clienteEntidade;
+
     @Column(nullable = false)
     private String agencia;
     @Column(nullable = false)

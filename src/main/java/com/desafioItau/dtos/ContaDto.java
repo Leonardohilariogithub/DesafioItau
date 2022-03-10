@@ -1,5 +1,6 @@
 package com.desafioItau.dtos;
 
+import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class ContaDto {
 
+    private ClienteEntidade clienteEntidade;
+
     @NotBlank
     private String agencia;
     @NotBlank
@@ -23,7 +26,4 @@ public class ContaDto {
     @NotBlank
     private String clienteCpf;
 
-    public ContaEntidade transformaParaObjeto2() { // POST
-        return new ContaEntidade(agencia, numeroDaConta, tipoDaConta, digitoVerificador, clienteCpf);
-    }
 }
