@@ -18,9 +18,7 @@ import javax.persistence.ManyToOne;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContaDto {
 
-    private ClienteEntidade clienteEntidade;
-
-
+    private Long id;
     private String agencia;
 
     private String numeroDaConta;
