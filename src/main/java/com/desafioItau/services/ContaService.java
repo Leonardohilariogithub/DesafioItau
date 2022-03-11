@@ -3,11 +3,11 @@ package com.desafioItau.services;
 import com.desafioItau.dtos.ContaDto;
 import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.repositorys.ClienteRepository;
 import com.desafioItau.repositorys.ContaRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,11 +20,14 @@ public class ContaService {
 
     private final ContaRepository contaRepository;  //Utilizar metodos prontos do JPARepository
     private final ModelMapper modelMapper;
+    private  final ClienteRepository clienteRepository;
 
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) {
+        Optional<ClienteEntidade> clienteEntidade = Optional.ofNullable(clienteRepository.findClienteByDocumento(contaDto.getClienteCpf()));
         ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
         contaEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+        contaEntidade.setClienteCpf(clienteEntidade.get().getDocumento());
         return contaRepository.save(contaEntidade);
     }
 

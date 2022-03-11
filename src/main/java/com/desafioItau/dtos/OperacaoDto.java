@@ -23,5 +23,4 @@ public class OperacaoDto {
     private BigDecimal taxa;
     private BigDecimal saldo;
 
-
 }

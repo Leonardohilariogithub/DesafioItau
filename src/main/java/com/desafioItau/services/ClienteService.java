@@ -2,6 +2,7 @@ package com.desafioItau.services;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
+import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,16 +29,22 @@ public class ClienteService {
         clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return clienteRepository.save(clienteEntidade);
     }
-    public boolean existsByCpf(String cpf) {
-        return clienteRepository.existsByCpf(cpf);
+    public boolean existsByDocumento(String documento) {
+        return clienteRepository.existsByDocumento(documento);
     }
 
     public Page<ClienteEntidade> findAll(Pageable pageable) { //listar
         return clienteRepository.findAll(pageable);
     }
 
-    public Optional<ClienteEntidade> obter(Long id) {
-        return clienteRepository.findById(id);
+    public ClienteEntidade obter(String documento) {
+       ClienteEntidade cliente1 = clienteRepository.findClienteByDocumento(documento);
+
+        if(Objects.nonNull(cliente1)){
+            return cliente1;
+        } else {
+            throw new ClienteExistenteException("teste");
+        }
     }
 
     public ClienteEntidade atualizar(Long id, ClienteEntidade clienteAtualizado) {  // Setando atributo ID e registro automaticos
