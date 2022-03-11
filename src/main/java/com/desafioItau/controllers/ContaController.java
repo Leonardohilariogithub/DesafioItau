@@ -41,7 +41,7 @@ public class ContaController {
         return ResponseEntity.ok(contaEntidadeOptional.get());
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/atualizar/")
     public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "id") Long id){
         ContaEntidade conta = new ContaEntidade();
         BeanUtils.copyProperties(contaDto, conta);
@@ -53,6 +53,6 @@ public class ContaController {
     public ResponseEntity<Object> deletarConta(@PathVariable Long id){
         Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
         contaService.deletarConta(contaEntidadeOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Conta Deletada com SUCESSO!!!");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

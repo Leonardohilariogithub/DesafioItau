@@ -26,7 +26,6 @@ public class ContaEntidade implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     private String agencia;
 
     private String numeroDaConta;

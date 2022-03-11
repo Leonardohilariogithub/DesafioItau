@@ -6,6 +6,7 @@ import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,7 @@ public class ClienteService {
     }
 
     public ClienteEntidade obter(String documento) {
-       ClienteEntidade cliente1 = clienteRepository.findClienteByDocumento(documento);
-
+        ClienteEntidade cliente1 = clienteRepository.findClienteByDocumento(documento);
         if(Objects.nonNull(cliente1)){
             return cliente1;
         } else {
@@ -47,20 +47,41 @@ public class ClienteService {
         }
     }
 
-    public ClienteEntidade atualizar(Long id, ClienteEntidade clienteAtualizado) {  // Setando atributo ID e registro automaticos
-        ClienteEntidade cliente = clienteRepository.getById(id);
-        clienteAtualizado.setId(cliente.getId());
-        clienteAtualizado.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-        return clienteRepository.save(clienteAtualizado);
+    public ClienteEntidade atualizar( ClienteEntidade cliente, String documento) {  // Setando atributo ID e registro automaticos
+
+        ClienteEntidade clienteAtual = clienteRepository.findClienteByDocumento(documento);
+        if(Objects.nonNull(clienteAtual)){
+            BeanUtils.copyProperties(cliente, clienteAtual);
+            return clienteRepository.save(clienteAtual);
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "cliente de documento %s nao encontrado!",documento
+            ));
+
+        }
     }
+
+//        ClienteEntidade cliente = clienteRepository.getById(id);
+//        clienteAtualizado.setId(cliente.getId());
+//        clienteAtualizado.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+//        return clienteRepository.save(clienteAtualizado);
 
     public Optional<ClienteEntidade> findById(Long id) {
         return clienteRepository.findById(id);
     }
 
-    @Transactional
-    public void deletarCliente(ClienteEntidade clienteEntidade) {
-        clienteRepository.delete(clienteEntidade);
+    public void deletarCliente(String documento) {
+        ClienteEntidade cliente = clienteRepository.findClienteByDocumento(documento);
+        if(Objects.nonNull(cliente)){
+           clienteRepository.delete(cliente);
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "cliente de documento %s nao encontrado ou não existe!",documento
+            ));
+
+        }
+    }
+        //clienteRepository.delete(clienteEntidade);
     }
 
-}
+

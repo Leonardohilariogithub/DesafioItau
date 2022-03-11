@@ -38,7 +38,6 @@ public class ClienteEntidade implements Serializable {
     @Column(nullable = false, length = 35)
     private String endereco;
 
-    @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 
 }
