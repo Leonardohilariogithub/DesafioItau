@@ -13,7 +13,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -24,12 +23,11 @@ import java.util.Optional;
 public class ClienteController{
 
     private final ClienteService clienteService;
-
     private final ModelMapper modelMapper;
 
     @PostMapping(value = "/cadastro")
     public ResponseEntity<Object> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
-        if(clienteService.existsByCpf(clienteDto.getCpf())){
+        if(clienteService.existsByDocumento(clienteDto.getDocumento())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF já tem cadastro, por favor verificar!");
         }
         var clienteEntidade = new ClienteEntidade();
@@ -42,13 +40,16 @@ public class ClienteController{
         return ResponseEntity.status(HttpStatus.OK).body(clienteService.findAll(pageable));
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Object> obterCliente(@PathVariable Long id){
-        Optional<ClienteEntidade> clienteEntidadeOptional = clienteService.findById(id);
-        if (!clienteEntidadeOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado ou nao existe!!");
-        }
-        return ResponseEntity.ok(clienteEntidadeOptional.get());
+    @GetMapping("/obterCliente/")
+    public ResponseEntity<?> obterCliente(@RequestParam(name = "documento") String documento){
+        ClienteEntidade cliente = clienteService.obter(documento);
+        return ResponseEntity.status(HttpStatus.OK).body(cliente);
+
+//        Optional<ClienteEntidade> clienteEntidadeOptional = clienteService.obter(documento);
+//        if (!clienteEntidadeOptional.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado ou nao existe!!");
+//        }
+//        return ResponseEntity.ok(clienteEntidadeOptional.get());
     }
 
     @PutMapping("/atualizar/{id}")
@@ -58,17 +59,17 @@ public class ClienteController{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado ou nao existe!!");
         }
         var clienteEntidade = clienteService.atualizar(id, modelMapper.map(clienteDto, ClienteEntidade.class));
-        return ResponseEntity.created(null).body(clienteEntidadeOptional.get());
+        return ResponseEntity.ok().body(clienteEntidadeOptional.get());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deletarCliente(@PathVariable Long id){
+    public ResponseEntity<?> deletarCliente(@PathVariable Long id){
         Optional<ClienteEntidade> clienteEntidadeOptional = clienteService.findById(id);
         if (!clienteEntidadeOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado ou nao existe!");
         }
         clienteService.deletarCliente(clienteEntidadeOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Deletado com SUCESSO!");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

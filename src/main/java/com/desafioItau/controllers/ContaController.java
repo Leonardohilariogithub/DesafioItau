@@ -21,7 +21,6 @@ import java.util.Optional;
 public class ContaController {
 
     private final ContaService contaService;
-
     private final ModelMapper modelMapper;
 
     @PostMapping(value = "/cadastro")
@@ -56,5 +55,4 @@ public class ContaController {
         contaService.deletarConta(contaEntidadeOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Conta Deletada com SUCESSO!!!");
     }
-
 }

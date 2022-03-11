@@ -6,7 +6,7 @@
 //
 //@NoArgsConstructor
 //@AllArgsConstructor
-//@Data
+//@Getter
 //public enum EnumOperacao {
 //
 //    TRANSFERENCIA(1),

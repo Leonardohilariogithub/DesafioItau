@@ -1,28 +1,38 @@
 package com.desafioItau.dtos;
 
-import com.desafioItau.entidades.ClienteEntidade;
+import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.enums.EnumTipoPessoaCpfOuCnpj;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClienteDto {
 
-    @NotBlank  // Anotaçoes da dependecia Validation
     private String nome;
-    @NotBlank 
-    private String cpf;
-    @NotBlank
+
+    @Enumerated(EnumType.STRING)
+    private EnumTipoPessoaCpfOuCnpj tipoDocumento;
+
+    private String documento;
+
     private String telefone;
-    @NotBlank
+
     private String endereco;
 
-    public ClienteEntidade transformaParaObjeto() { //POST
-        return new ClienteEntidade(nome, cpf, telefone, endereco);
-    }
+    private LocalDateTime registro;// regra que vou colocar
+
 
 }

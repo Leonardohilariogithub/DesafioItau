@@ -1,5 +1,8 @@
 package com.desafioItau.entidades;
 
+import com.desafioItau.enums.EnumTipoPessoaCpfOuCnpj;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,11 +10,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "tb_cliente")
 public class ClienteEntidade implements Serializable {
 
@@ -22,8 +28,10 @@ public class ClienteEntidade implements Serializable {
     @Column(length = 35)
     private String nome;
 
-    @Column(nullable = false)
-    private String cpf;
+    @Enumerated(EnumType.STRING)
+    private EnumTipoPessoaCpfOuCnpj tipoDocumento;
+
+    private String documento;
 
     @Column(nullable = false)
     private String telefone;
@@ -33,11 +41,4 @@ public class ClienteEntidade implements Serializable {
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar
 
-    public ClienteEntidade(String nome, String cpf, String telefone, String endereco) {  //POST
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-        this.endereco = endereco;
-    }
 }

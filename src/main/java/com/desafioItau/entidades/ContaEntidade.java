@@ -1,9 +1,12 @@
 package com.desafioItau.entidades;
 
+import com.desafioItau.dtos.ClienteDto;
+import com.desafioItau.enums.EnumConta;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,32 +15,30 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "tb_conta")
 public class ContaEntidade implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
+
     private String agencia;
-    @Column(nullable = false)
+
     private String numeroDaConta;
-    @Column(nullable = false)
-    private String tipoDaConta;
-    @Column(nullable = false)
+
+    @Enumerated(EnumType.STRING)
+    private EnumConta tipoDaConta;
+
     private String digitoVerificador;
-    @Column(nullable = false)
+
     private String clienteCpf;
-    @Column(nullable = false)
+
+
     private LocalDateTime registro;// regra que vou colocar
 
-    public ContaEntidade(String agencia, String numeroDaConta, String tipoDaConta, String digitoVerificador,String clienteCpf) {   //POST
-        this.id = id;
-        this.agencia = agencia;
-        this.numeroDaConta = numeroDaConta;
-        this.tipoDaConta = tipoDaConta;
-        this.digitoVerificador = digitoVerificador;
-        this.clienteCpf = clienteCpf;
-    }
 }

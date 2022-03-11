@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -42,18 +41,21 @@ public class OperacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(operacaoObtida.get());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarOperacao(@PathVariable Long id){
-        Optional<OperacaoEntidade> operacaoDeletada = operacaoService.findById(id);
-        operacaoService.delete(operacaoDeletada.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Operação Deletada");
-    }
-
     @PutMapping("/atualizar/{id}")
     public ResponseEntity<Object> atualizarOperacao(@PathVariable @RequestParam(value = "id") Long id, @RequestBody @Valid OperacaoDto operacaoDto){
         OperacaoEntidade conta = new OperacaoEntidade();
         BeanUtils.copyProperties(operacaoDto, conta);
         operacaoService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
         return ResponseEntity.status(HttpStatus.OK).body(conta);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deletarOperacao(@PathVariable Long id){
+        Optional<OperacaoEntidade> operacaoDeletada = operacaoService.findById(id);
+        if (!operacaoDeletada.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existe nenhuma Operação!");
+        }
+        operacaoService.delete(operacaoDeletada.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Operação Deletada");
     }
 }
