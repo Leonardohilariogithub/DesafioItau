@@ -9,7 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -35,10 +34,10 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.OK).body(contaService.findAll());
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Object>obterConta(@PathVariable Long id){
-        Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
-        return ResponseEntity.ok(contaEntidadeOptional.get());
+    @GetMapping("/obterConta/")
+    public ResponseEntity<?> obterConta (@RequestParam(name = "numeroDaConta") String numeroDaConta){
+        ContaEntidade conta = contaService.obter(numeroDaConta);
+        return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
 
     @PutMapping("/atualizar/")

@@ -4,6 +4,7 @@ import com.desafioItau.entidades.OperacaoEntidade;
 import com.desafioItau.repositorys.OperacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

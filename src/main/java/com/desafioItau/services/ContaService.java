@@ -1,8 +1,8 @@
 package com.desafioItau.services;
 
 import com.desafioItau.dtos.ContaDto;
-import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import com.desafioItau.repositorys.ContaRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -24,10 +25,8 @@ public class ContaService {
 
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) {
-        Optional<ClienteEntidade> clienteEntidade = Optional.ofNullable(clienteRepository.findClienteByDocumento(contaDto.getClienteCpf()));
         ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
         contaEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-        contaEntidade.setClienteCpf(clienteEntidade.get().getDocumento());
         return contaRepository.save(contaEntidade);
     }
 
@@ -39,8 +38,13 @@ public class ContaService {
         return  contaRepository.findAll();
     }
 
-    public Optional<ContaEntidade> obter(Long id) {
-        return contaRepository.findById(id);
+    public ContaEntidade obter (String numeroDaConta){
+        ContaEntidade conta1 = contaRepository.findContaByNumeroDaConta(numeroDaConta);
+        if(Objects.nonNull(conta1)){
+            return conta1;
+        } else {
+            throw new ClienteExistenteException("teste");
+        }
     }
 
     public ContaEntidade atualizar(Long id, ContaEntidade contaAtualizada) {  // Setando atributo ID e registro automaticos

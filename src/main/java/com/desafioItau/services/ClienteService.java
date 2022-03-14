@@ -61,11 +61,6 @@ public class ClienteService {
         }
     }
 
-//        ClienteEntidade cliente = clienteRepository.getById(id);
-//        clienteAtualizado.setId(cliente.getId());
-//        clienteAtualizado.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-//        return clienteRepository.save(clienteAtualizado);
-
     public Optional<ClienteEntidade> findById(Long id) {
         return clienteRepository.findById(id);
     }
