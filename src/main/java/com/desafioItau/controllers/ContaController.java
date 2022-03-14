@@ -40,18 +40,24 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
 
-    @PutMapping("/atualizar/")
-    public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "id") Long id){
-        ContaEntidade conta = new ContaEntidade();
-        BeanUtils.copyProperties(contaDto, conta);
-        contaService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
+    @GetMapping("/obterByDocumento/")
+    public ResponseEntity<?> obterDocumento (@RequestParam(name = "clienteCpf") String clienteCpf){
+        List<ContaEntidade> conta = contaService.buscarDocumento(clienteCpf);
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> deletarConta(@PathVariable Long id){
-        Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
-        contaService.deletarConta(contaEntidadeOptional.get());
+    @PutMapping("/atualizar/")
+    public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "numeroDaConta") String numeroDaConta){
+        ContaEntidade conta = new ContaEntidade();
+        BeanUtils.copyProperties(contaDto, conta);
+        contaService.atualizar(conta, numeroDaConta);     //PUT usando PARANS- KEY id -VALUE -2
+        return ResponseEntity.status(HttpStatus.OK).body(conta);
+    }
+
+    @DeleteMapping("deletar/")
+    public ResponseEntity<?> deletarConta(@RequestParam(name = "numeroDaConta") String numeroDaConta){
+        //Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
+        contaService.deletarConta(numeroDaConta);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -7,6 +7,7 @@ import com.desafioItau.repositorys.ClienteRepository;
 import com.desafioItau.repositorys.ContaRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -47,18 +48,52 @@ public class ContaService {
         }
     }
 
-    public ContaEntidade atualizar(Long id, ContaEntidade contaAtualizada) {  // Setando atributo ID e registro automaticos
-        ContaEntidade conta = contaRepository.getById(id);
-        contaAtualizada.setId(conta.getId());
-        contaAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC"))); // .setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-        return contaRepository.save(contaAtualizada);
+    public ContaEntidade atualizar(ContaEntidade conta, String numeroDaConta) {  // Setando atributo ID e registro automaticos
+
+        ContaEntidade clienteAtual = contaRepository.findClienteByNumeroDaConta(numeroDaConta);
+        if(Objects.nonNull(clienteAtual)){
+            BeanUtils.copyProperties(conta, clienteAtual);
+            return contaRepository.save(clienteAtual);
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "cliente de documento %s nao encontrado!",numeroDaConta
+            ));
+
+        }
+
+        //        ContaEntidade conta = contaRepository.getById(id);
+//        contaAtualizada.setId(conta.getId());
+//        contaAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC"))); // .setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+//        return contaRepository.save(contaAtualizada);
     }
 
     public Optional<ContaEntidade> findById(Long id) {
         return contaRepository.findById(id);
     }
 
-    public void deletarConta(ContaEntidade contaEntidade) {
-        contaRepository.delete(contaEntidade);
+    public void deletarConta(String numeroDaConta) {
+        ContaEntidade conta = contaRepository.findContaByNumeroDaConta(numeroDaConta);
+        if(Objects.nonNull(conta)){
+            contaRepository.delete(conta);
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "cliente de documento %s nao encontrado ou não existe!",numeroDaConta
+            ));
+
+        }
+    }
+
+    public List<ContaEntidade> buscarDocumento (String clienteCpf) { //Buscar Pelo Documento
+        List<ContaEntidade> contas = contaRepository.findContaByClienteCpf(clienteCpf);
+        if (contas.size() > 0) {
+            for (ContaEntidade conta : contas) {
+                conta.getClienteCpf();
+            }
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "conta de documento %s não encontrado", clienteCpf
+            ));
+        }
+        return contas;
     }
 }
