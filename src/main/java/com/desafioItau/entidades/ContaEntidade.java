@@ -1,12 +1,12 @@
 package com.desafioItau.entidades;
 
-import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.enums.EnumConta;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
