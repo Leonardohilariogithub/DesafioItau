@@ -1,6 +1,7 @@
 package com.desafioItau.entidades;
 
 import com.desafioItau.enums.EnumTipoPessoaCpfOuCnpj;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -40,4 +43,7 @@ public class ClienteEntidade implements Serializable {
 
     private LocalDateTime registro;// regra que vou colocar
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente")
+    private List<ContaEntidade> contas = new ArrayList<>();
 }

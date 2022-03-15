@@ -51,27 +51,12 @@ public class ClienteController{
         BeanUtils.copyProperties(clienteDto, cliente);
         clienteService.atualizar(cliente,documento);
         return ResponseEntity.status(HttpStatus.OK).body(cliente);
-
-//        Optional<ClienteEntidade> clienteEntidadeOptional = clienteService.findById(id);
-//        if (!clienteEntidadeOptional.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado ou nao existe!!");
-//        }
-//        var clienteEntidade = clienteService.atualizar(id, modelMapper.map(clienteDto, ClienteEntidade.class));
-//        return ResponseEntity.ok().body(clienteEntidadeOptional.get());
     }
 
     @DeleteMapping("/deletar/")
     public ResponseEntity<?> deletarCliente(@RequestParam(name = "documento") String documento){
         clienteService.deletarCliente(documento);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
-//        Optional<ClienteEntidade> clienteEntidadeOptional = clienteService.findById(id);
-//        if (!clienteEntidadeOptional.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado ou nao existe!");
-//        }
-//        clienteService.deletarCliente(clienteEntidadeOptional.get());
-//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 }
 

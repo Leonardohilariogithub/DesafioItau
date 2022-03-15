@@ -40,4 +40,7 @@ public class ContaEntidade implements Serializable {
 
     private LocalDateTime registro;// regra que vou colocar
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private ClienteEntidade cliente;
 }

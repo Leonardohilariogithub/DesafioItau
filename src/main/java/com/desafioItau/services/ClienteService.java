@@ -2,6 +2,8 @@ package com.desafioItau.services;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
+import com.desafioItau.enums.EnumTipoPessoaCpfOuCnpj;
+import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,6 +27,13 @@ public class ClienteService {
 
     @Transactional// evita dados quebrados
     public  ClienteEntidade  criarCliente ( ClienteDto  clienteDto ){
+        if (clienteDto.getDocumento().length() != 11 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CPF){
+            throw new ClienteCpfException();
+        }
+        if (clienteDto.getDocumento().length() != 14 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CNPJ){
+            throw new ClienteCpfException();
+        }
+
         ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
         clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return clienteRepository.save(clienteEntidade);

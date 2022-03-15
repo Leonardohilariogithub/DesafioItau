@@ -13,4 +13,5 @@ public interface ContaRepository extends JpaRepository<ContaEntidade, Long> {
     ContaEntidade findClienteByNumeroDaConta(String numeroDaConta);
 
     List<ContaEntidade> findContaByClienteCpf(String clienteCpf);
+
 }

@@ -1,6 +1,7 @@
 package com.desafioItau.services;
 
 import com.desafioItau.dtos.ContaDto;
+import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
@@ -8,6 +9,8 @@ import com.desafioItau.repositorys.ContaRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -27,7 +30,9 @@ public class ContaService {
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) {
         ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
+        ClienteEntidade clienteEntidade = clienteRepository.findClienteByDocumento(contaDto.getClienteCpf());
         contaEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+        contaEntidade.setCliente(clienteEntidade);
         return contaRepository.save(contaEntidade);
     }
 
@@ -79,7 +84,6 @@ public class ContaService {
             throw new ClienteExistenteException(String.format(
                     "cliente de documento %s nao encontrado ou não existe!",numeroDaConta
             ));
-
         }
     }
 
@@ -96,4 +100,6 @@ public class ContaService {
         }
         return contas;
     }
+
+
 }
