@@ -27,10 +27,10 @@ public class ClienteService {
 
     @Transactional// evita dados quebrados
     public  ClienteEntidade  criarCliente ( ClienteDto  clienteDto ){
-        if (clienteDto.getDocumento().length() != 11 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CPF){
+        if (clienteDto.getDocumento().length() != 14 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CPF){
             throw new ClienteCpfException();
         }
-        if (clienteDto.getDocumento().length() != 14 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CNPJ){
+        if (clienteDto.getDocumento().length() != 18 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CNPJ){
             throw new ClienteCpfException();
         }
 

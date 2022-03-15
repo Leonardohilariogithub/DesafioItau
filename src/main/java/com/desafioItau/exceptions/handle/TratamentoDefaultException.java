@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class ExceptionHande {
+public class TratamentoDefaultException {
 
     @ExceptionHandler(ClienteCpfException.class)
     public ResponseEntity<DefaultException> handle(ClienteCpfException e) {
         DefaultException defaultException = new DefaultException();
-        defaultException.setStatus(HttpStatus.BAD_REQUEST.value());
+        defaultException.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
         defaultException.setMsg(" Documento Invalido ");
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
