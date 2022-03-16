@@ -1,12 +1,11 @@
 package com.desafioItau.entidades;
 
-import com.desafioItau.enums.EnumConta;
+import com.desafioItau.enums.EnumTipoDaConta;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,13 +30,17 @@ public class ContaEntidade implements Serializable {
     private String numeroDaConta;
 
     @Enumerated(EnumType.STRING)
-    private EnumConta tipoDaConta;
+    private EnumTipoDaConta tipoDaConta;
 
     private String digitoVerificador;
 
     private String clienteCpf;
 
+    private String clienteCnpj;
 
     private LocalDateTime registro;// regra que vou colocar
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private ClienteEntidade cliente;
 }

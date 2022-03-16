@@ -1,6 +1,6 @@
 package com.desafioItau.dtos;
 
-import com.desafioItau.enums.EnumConta;
+import com.desafioItau.enums.EnumTipoDaConta;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,15 +16,18 @@ import javax.persistence.Enumerated;
 public class ContaDto {
 
     private Long id;
+
     private String agencia;
 
     private String numeroDaConta;
 
     @Enumerated(EnumType.STRING)
-    private EnumConta tipoDaConta;
+    private EnumTipoDaConta tipoDaConta;
 
     private String digitoVerificador;
 
     private String clienteCpf;
+
+    private String clienteCnpj;
 
 }

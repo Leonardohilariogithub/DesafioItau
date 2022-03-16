@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -40,7 +39,7 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
 
-    @GetMapping("/obterByDocumento/")
+    @GetMapping("/obterContaPeloDocumento/")
     public ResponseEntity<?> obterDocumento (@RequestParam(name = "clienteCpf") String clienteCpf){
         List<ContaEntidade> conta = contaService.buscarDocumento(clienteCpf);
         return ResponseEntity.status(HttpStatus.OK).body(conta);
@@ -50,14 +49,27 @@ public class ContaController {
     public ResponseEntity<ContaEntidade> atualizarConta(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "numeroDaConta") String numeroDaConta){
         ContaEntidade conta = new ContaEntidade();
         BeanUtils.copyProperties(contaDto, conta);
-        contaService.atualizar(conta, numeroDaConta);     //PUT usando PARANS- KEY id -VALUE -2
+        contaService.atualizar(conta, numeroDaConta);     //PUT usando PARANS- KEY  -VALUE
         return ResponseEntity.status(HttpStatus.OK).body(conta);
+    }
+
+    @PutMapping("/atualizarContaPeloDocumento/")
+    public ResponseEntity<ContaEntidade> atualizarDocumento(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "clienteCpf") String clienteCpf){
+        ContaEntidade documento = new ContaEntidade();
+        BeanUtils.copyProperties(contaDto, documento);
+        contaService.atualizar(documento, clienteCpf);     //PUT usando PARANS- KEY  -VALUE
+        return ResponseEntity.status(HttpStatus.OK).body(documento);
     }
 
     @DeleteMapping("deletar/")
     public ResponseEntity<?> deletarConta(@RequestParam(name = "numeroDaConta") String numeroDaConta){
-        //Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
         contaService.deletarConta(numeroDaConta);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+//    @DeleteMapping("deletarContaPeloDocumento/")
+//    public ResponseEntity<?> deletarDocumento(@RequestParam(name = "clienteCpf") String clienteCpf){
+//        contaService.deletarDocumento(clienteCpf);
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//    }
 }

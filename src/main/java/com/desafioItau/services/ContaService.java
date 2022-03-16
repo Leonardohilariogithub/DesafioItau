@@ -1,7 +1,10 @@
 package com.desafioItau.services;
 
 import com.desafioItau.dtos.ContaDto;
+import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.enums.EnumTipoDaConta;
+import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import com.desafioItau.repositorys.ContaRepository;
@@ -22,11 +25,29 @@ public class ContaService {
 
     private final ContaRepository contaRepository;  //Utilizar metodos prontos do JPARepository
     private final ModelMapper modelMapper;
-    private  final ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
     @Transactional // evita dados quebrados
-    public ContaEntidade criarConta(ContaDto contaDto) {
+    public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null){
+            throw new ClienteCpfException("cliente nao pussui CPF para abrir conta fisica");
+        }
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && contaDto.getClienteCnpj() == null){
+            throw new ClienteCpfException("cliente nao pussui CNPJ para abrir conta JURIDICA");
+        }
+        ClienteEntidade cliente = null; // se a pessoa existe
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null){
+            cliente = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
+        }
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null){
+            cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+        }
+
         ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
+        contaEntidade.setCliente(cliente);
+        ClienteEntidade clienteEntidade = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
+        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+        Optional<ContaEntidade> verificarConta = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta()));
         contaEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return contaRepository.save(contaEntidade);
     }
@@ -36,12 +57,12 @@ public class ContaService {
     }
 
     public List<ContaEntidade> findAll() {
-        return  contaRepository.findAll();
+        return contaRepository.findAll();
     }
 
-    public ContaEntidade obter (String numeroDaConta){
+    public ContaEntidade obter(String numeroDaConta) {
         ContaEntidade conta1 = contaRepository.findContaByNumeroDaConta(numeroDaConta);
-        if(Objects.nonNull(conta1)){
+        if (Objects.nonNull(conta1)) {
             return conta1;
         } else {
             throw new ClienteExistenteException("teste");
@@ -49,22 +70,15 @@ public class ContaService {
     }
 
     public ContaEntidade atualizar(ContaEntidade conta, String numeroDaConta) {  // Setando atributo ID e registro automaticos
-
         ContaEntidade clienteAtual = contaRepository.findClienteByNumeroDaConta(numeroDaConta);
-        if(Objects.nonNull(clienteAtual)){
+        if (Objects.nonNull(clienteAtual)) {
             BeanUtils.copyProperties(conta, clienteAtual);
             return contaRepository.save(clienteAtual);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado!",numeroDaConta
+                    "cliente de documento %s nao encontrado!", numeroDaConta
             ));
-
         }
-
-        //        ContaEntidade conta = contaRepository.getById(id);
-//        contaAtualizada.setId(conta.getId());
-//        contaAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC"))); // .setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-//        return contaRepository.save(contaAtualizada);
     }
 
     public Optional<ContaEntidade> findById(Long id) {
@@ -73,17 +87,16 @@ public class ContaService {
 
     public void deletarConta(String numeroDaConta) {
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(numeroDaConta);
-        if(Objects.nonNull(conta)){
+        if (Objects.nonNull(conta)) {
             contaRepository.delete(conta);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado ou não existe!",numeroDaConta
+                    "cliente de documento %s nao encontrado ou não existe!", numeroDaConta
             ));
-
         }
     }
 
-    public List<ContaEntidade> buscarDocumento (String clienteCpf) { //Buscar Pelo Documento
+    public List<ContaEntidade> buscarDocumento(String clienteCpf) { //Buscar Pelo Documento
         List<ContaEntidade> contas = contaRepository.findContaByClienteCpf(clienteCpf);
         if (contas.size() > 0) {
             for (ContaEntidade conta : contas) {

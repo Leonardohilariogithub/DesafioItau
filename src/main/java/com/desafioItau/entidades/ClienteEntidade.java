@@ -1,17 +1,15 @@
 package com.desafioItau.entidades;
 
-import com.desafioItau.enums.EnumTipoPessoaCpfOuCnpj;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.br.CNPJ;
-import org.hibernate.validator.constraints.br.CPF;
-
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,19 +23,23 @@ public class ClienteEntidade implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)// Gerar automaticamente
     private Long id; // UUID - identificador Universal indicado para projeto Microservices
-    @Column(length = 35)
+
+    @Column(nullable = false,length = 35)
     private String nome;
 
-    @Enumerated(EnumType.STRING)
-    private EnumTipoPessoaCpfOuCnpj tipoDocumento;
+    private String cpf;
 
-    private String documento;
+    private String cnpj;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 35)
     private String telefone;
+
     @Column(nullable = false, length = 35)
     private String endereco;
 
     private LocalDateTime registro;// regra que vou colocar
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente")
+    private List<ContaEntidade> contas = new ArrayList<>();
 }
