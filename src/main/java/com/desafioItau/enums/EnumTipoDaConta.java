@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public enum EnumConta {
+public enum EnumTipoDaConta {
 
     PESSOA_FISICA(0,"Pessoa Fisica"),
     PESSOA_JURIDICA(1, "Pessoa Juridica"),

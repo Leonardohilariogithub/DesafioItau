@@ -4,7 +4,6 @@ import com.desafioItau.entidades.OperacaoEntidade;
 import com.desafioItau.repositorys.OperacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -38,7 +37,7 @@ public class OperacaoService {
     public OperacaoEntidade atualizar(Long id, OperacaoEntidade operacaoAtualizada) {
         OperacaoEntidade conta = operacaoRepository.getById(id);
         operacaoAtualizada.setId(conta.getId());
-        operacaoAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC"))); // .setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
+        operacaoAtualizada.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return operacaoRepository.save(operacaoAtualizada);
     }
 }

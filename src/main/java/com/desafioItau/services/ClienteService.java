@@ -2,8 +2,6 @@ package com.desafioItau.services;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
-import com.desafioItau.enums.EnumTipoPessoaCpfOuCnpj;
-import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,46 +24,56 @@ public class ClienteService {
     private final ModelMapper modelMapper;
 
     @Transactional// evita dados quebrados
-    public  ClienteEntidade  criarCliente ( ClienteDto  clienteDto ){
-        if (clienteDto.getDocumento().length() != 14 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CPF){
-            throw new ClienteCpfException();
-        }
-        if (clienteDto.getDocumento().length() != 18 && clienteDto.getTipoDocumento() == EnumTipoPessoaCpfOuCnpj.CNPJ){
-            throw new ClienteCpfException();
-        }
+    public ClienteEntidade criarCliente(ClienteDto clienteDto) {
 
         ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
         clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return clienteRepository.save(clienteEntidade);
-    }
-    public boolean existsByDocumento(String documento) {
-        return clienteRepository.existsByDocumento(documento);
     }
 
     public Page<ClienteEntidade> findAll(Pageable pageable) { //listar
         return clienteRepository.findAll(pageable);
     }
 
-    public ClienteEntidade obter(String documento) {
-        ClienteEntidade cliente1 = clienteRepository.findClienteByDocumento(documento);
-        if(Objects.nonNull(cliente1)){
+    public ClienteEntidade obter(String cpf) {
+        ClienteEntidade cliente1 = clienteRepository.findClienteByCpf(cpf);
+        if (Objects.nonNull(cliente1)) {
             return cliente1;
         } else {
             throw new ClienteExistenteException("teste");
         }
     }
 
-    public ClienteEntidade atualizar( ClienteEntidade cliente, String documento) {  // Setando atributo ID e registro automaticos
+    public ClienteEntidade obterCnpj(String cnpj) {
+        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(cnpj);
+        if (Objects.nonNull(clienteCnpj)) {
+            return clienteCnpj;
+        } else {
+            throw new ClienteExistenteException("teste");
+        }
+    }
 
-        ClienteEntidade clienteAtual = clienteRepository.findClienteByDocumento(documento);
-        if(Objects.nonNull(clienteAtual)){
+    public ClienteEntidade atualizar(ClienteEntidade cliente, String cpf) {  // Setando atributo ID e registro automaticos
+        ClienteEntidade clienteAtual = clienteRepository.findClienteByCpf(cpf);
+        if (Objects.nonNull(clienteAtual)) {
             BeanUtils.copyProperties(cliente, clienteAtual);
             return clienteRepository.save(clienteAtual);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado!",documento
+                    "cliente de documento %s nao encontrado!", cpf
             ));
+        }
+    }
 
+    public ClienteEntidade atualizarCnpj(ClienteEntidade cliente, String cnpj) {  // Setando atributo ID e registro automaticos
+        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(cnpj);
+        if (Objects.nonNull(clienteCnpj)) {
+            BeanUtils.copyProperties(cliente, clienteCnpj);
+            return clienteRepository.save(clienteCnpj);
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "cliente de documento %s nao encontrado!", clienteCnpj
+            ));
         }
     }
 
@@ -73,18 +81,27 @@ public class ClienteService {
         return clienteRepository.findById(id);
     }
 
-    public void deletarCliente(String documento) {
-        ClienteEntidade cliente = clienteRepository.findClienteByDocumento(documento);
-        if(Objects.nonNull(cliente)){
-           clienteRepository.delete(cliente);
+    public void deletarCliente(String cpf) {
+        ClienteEntidade cliente = clienteRepository.findClienteByCpf(cpf);
+        if (Objects.nonNull(cliente)) {
+            clienteRepository.delete(cliente);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado ou não existe!",documento
+                    "cliente de documento %s nao encontrado ou não existe!", cpf
             ));
-
         }
     }
-        //clienteRepository.delete(clienteEntidade);
+
+    public void deletarClienteCnpj(String cnpj) {
+        ClienteEntidade cliente = clienteRepository.findClienteByCnpj(cnpj);
+        if (Objects.nonNull(cliente)) {
+            clienteRepository.delete(cliente);
+        } else {
+            throw new ClienteExistenteException(String.format(
+                    "cliente de documento %s nao encontrado ou não existe!", cnpj
+            ));
+        }
     }
+}
 
 

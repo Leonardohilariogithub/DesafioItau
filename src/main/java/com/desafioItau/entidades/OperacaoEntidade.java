@@ -3,7 +3,6 @@ package com.desafioItau.entidades;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,10 +27,10 @@ public class OperacaoEntidade implements Serializable {
 
     private BigDecimal valorDaTransação;
     private BigDecimal taxa;
-    private BigDecimal saldo;
 
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar     EnumOperacao tipoDaOperacao,
 
+    //u,a conta para varias operacao virce e vers
 
 }

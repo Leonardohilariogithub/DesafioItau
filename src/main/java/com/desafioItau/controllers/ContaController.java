@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -64,7 +63,6 @@ public class ContaController {
 
     @DeleteMapping("deletar/")
     public ResponseEntity<?> deletarConta(@RequestParam(name = "numeroDaConta") String numeroDaConta){
-        //Optional<ContaEntidade> contaEntidadeOptional = contaService.findById(id);
         contaService.deletarConta(numeroDaConta);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -26,9 +26,9 @@ public class ClienteController{
 
     @PostMapping(value = "/cadastro")
     public ResponseEntity<Object> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
-        if(clienteService.existsByDocumento(clienteDto.getDocumento())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF ou CNPJ já tem cadastro, por favor verificar!");
-        }
+//        if(clienteService.existsByDocumento(clienteDto.getDocumento())){
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF ou CNPJ já tem cadastro, por favor verificar!");
+//        }
         var clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(clienteDto));
@@ -40,22 +40,42 @@ public class ClienteController{
     }
 
     @GetMapping("/obterCliente/")
-    public ResponseEntity<?> obterCliente(@RequestParam(name = "documento") String documento){
-        ClienteEntidade cliente = clienteService.obter(documento);
+    public ResponseEntity<?> obterCliente(@RequestParam(name = "cpf") String cpf){
+        ClienteEntidade cliente = clienteService.obter(cpf);
         return ResponseEntity.status(HttpStatus.OK).body(cliente);
+    }
+
+    @GetMapping("/obterClienteCnpj/")
+    public ResponseEntity<?> obterClienteCnpj(@RequestParam(name = "cnpj") String cnpj){
+        ClienteEntidade clienteCnpj = clienteService.obterCnpj(cnpj);
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCnpj);
     }
 
     @PutMapping("/atualizar/")
-    public ResponseEntity<ClienteEntidade> atualizarCliente(@RequestBody @Valid ClienteDto clienteDto, @RequestParam(name = "documento") String documento){
+    public ResponseEntity<ClienteEntidade> atualizarCliente(@RequestBody @Valid ClienteDto clienteDto, @RequestParam(name = "cpf") String cpf){
         ClienteEntidade cliente = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, cliente);
-        clienteService.atualizar(cliente,documento);
+        clienteService.atualizar(cliente,cpf);
         return ResponseEntity.status(HttpStatus.OK).body(cliente);
     }
 
+    @PutMapping("/atualizarCnpj/")
+    public ResponseEntity<ClienteEntidade> atualizarClienteCnpj(@RequestBody @Valid ClienteDto clienteDto, @RequestParam(name = "cnpj") String cnpj){
+        ClienteEntidade clienteCnpj = new ClienteEntidade();
+        BeanUtils.copyProperties(clienteDto, clienteCnpj);
+        clienteService.atualizarCnpj(clienteCnpj,cnpj);
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCnpj);
+    }
+
     @DeleteMapping("/deletar/")
-    public ResponseEntity<?> deletarCliente(@RequestParam(name = "documento") String documento){
-        clienteService.deletarCliente(documento);
+    public ResponseEntity<?> deletarCliente(@RequestParam(name = "cpf") String cpf){
+        clienteService.deletarCliente(cpf);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/deletarCnpj/")
+    public ResponseEntity<?> deletarClienteCnpj(@RequestParam(name = "cnpj") String cnpj){
+        clienteService.deletarClienteCnpj(cnpj);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
