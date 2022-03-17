@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -29,5 +29,7 @@ public class ContaDto {
     private String clienteCpf;
 
     private String clienteCnpj;
+
+    private BigDecimal saldo = BigDecimal.valueOf(0);
 
 }

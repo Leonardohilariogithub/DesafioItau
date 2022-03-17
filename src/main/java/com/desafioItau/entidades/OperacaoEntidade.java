@@ -1,7 +1,9 @@
 package com.desafioItau.entidades;
 
+import com.desafioItau.enums.EnumOperacao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,20 +20,22 @@ public class OperacaoEntidade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     private String numeroDaConta;
     private String numeroDaContaDestino;
 
-//    @Enumerated(EnumType.STRING)
-//    private EnumOperacao tipoDaOperacao;        //TRANSFERENCIA(1),SAQUE(2), DEPOSITO(3);
+    @Enumerated(EnumType.STRING)
+    private EnumOperacao tipoDaOperacao;        //TRANSFERENCIA(1),SAQUE(2), DEPOSITO(3);
 
     private BigDecimal valorDaTransação;
     private BigDecimal taxa;
+    private BigDecimal saldo;
+    private String mensagem;
+    private String aviso;
 
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar     EnumOperacao tipoDaOperacao,
 
-    @ManyToOne
-    @JoinColumn(name = "conta_id")
-    private ContaEntidade conta;
+
 }

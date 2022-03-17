@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -22,9 +23,11 @@ public class ClienteDto {
     @NotBlank //obrigatorio
     private String nome;
 
+    @Column(unique = true)
     @CPF
     private String cpf;
 
+    @Column(unique = true)
     @CNPJ
     private String cnpj;
 
