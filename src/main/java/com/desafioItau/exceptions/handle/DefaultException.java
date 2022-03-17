@@ -1,6 +1,5 @@
 package com.desafioItau.exceptions.handle;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
