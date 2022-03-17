@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
