@@ -6,14 +6,11 @@ import com.desafioItau.services.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)//pemitir acessar de qualquer fonte
@@ -26,17 +23,14 @@ public class ClienteController{
 
     @PostMapping(value = "/cadastro")
     public ResponseEntity<Object> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
-//        if(clienteService.existsByDocumento(clienteDto.getDocumento())){
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF ou CNPJ já tem cadastro, por favor verificar!");
-//        }
         var clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(clienteDto));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ClienteEntidade>> listarCliente(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.status(HttpStatus.OK).body(clienteService.findAll(pageable));
+    public ResponseEntity<List<ClienteEntidade>> listarCliente(){
+        return ResponseEntity.status(HttpStatus.OK).body(clienteService.findAll());
     }
 
     @GetMapping("/obterCliente/")

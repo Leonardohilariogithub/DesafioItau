@@ -1,18 +1,19 @@
-//package com.desafioItau.enums;
-//
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Getter
-//public enum EnumOperacao {
-//
-//    TRANSFERENCIA(1),
-//    SAQUE(2),
-//    DEPOSITO(3);
-//
-//    private int codigo;
-//
-//}
+package com.desafioItau.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public enum EnumOperacao {
+
+    TRANSFERENCIA(1,"Transferencia"),
+    SAQUE(2, "Saque"),
+    DEPOSITO(3, "Deposito");
+
+    private int codigo;
+    public String descricao;
+
+}
