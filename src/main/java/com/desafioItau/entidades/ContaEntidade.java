@@ -1,6 +1,7 @@
 package com.desafioItau.entidades;
 
 import com.desafioItau.enums.EnumTipoDaConta;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -43,4 +46,8 @@ public class ContaEntidade implements Serializable {
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private ClienteEntidade cliente;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "conta")
+    private List<OperacaoEntidade> operacoes = new ArrayList<>();
 }

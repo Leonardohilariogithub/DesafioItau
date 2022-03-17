@@ -21,6 +21,5 @@ public class OperacaoDto {
 
     private BigDecimal valorDaTransação;
     private BigDecimal taxa;
-    private BigDecimal saldo;
 
 }

@@ -31,6 +31,7 @@ public class OperacaoEntidade implements Serializable {
     @Column(nullable = false)
     private LocalDateTime registro;// regra que vou colocar     EnumOperacao tipoDaOperacao,
 
-    //u,a conta para varias operacao virce e vers
-
+    @ManyToOne
+    @JoinColumn(name = "conta_id")
+    private ContaEntidade conta;
 }

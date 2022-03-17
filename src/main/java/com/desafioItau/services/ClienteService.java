@@ -9,10 +9,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,14 +28,16 @@ public class ClienteService {
 
     @Transactional// evita dados quebrados
     public ClienteEntidade criarCliente(ClienteDto clienteDto) {
-
+//        if(clienteRepository.existsByCpf(clienteDto.getCpf())){
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF ou CNPJ já tem cadastro, por favor verificar!");
+//        }
         ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
         clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return clienteRepository.save(clienteEntidade);
     }
 
-    public Page<ClienteEntidade> findAll(Pageable pageable) { //listar
-        return clienteRepository.findAll(pageable);
+    public List<ClienteEntidade> findAll() { //listar
+        return clienteRepository.findAll();
     }
 
     public ClienteEntidade obter(String cpf) {
