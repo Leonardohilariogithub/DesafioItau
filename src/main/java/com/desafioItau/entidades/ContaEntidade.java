@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +42,12 @@ public class ContaEntidade implements Serializable {
 
     private String clienteCnpj;
 
+    private BigDecimal saldo = BigDecimal.valueOf(0);
+
     private LocalDateTime registro;// regra que vou colocar
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private ClienteEntidade cliente;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "conta")
-    private List<OperacaoEntidade> operacoes = new ArrayList<>();
 }

@@ -7,10 +7,6 @@ import com.desafioItau.repositorys.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -28,12 +24,24 @@ public class ClienteService {
 
     @Transactional// evita dados quebrados
     public ClienteEntidade criarCliente(ClienteDto clienteDto) {
+        ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
+
+        ClienteEntidade clienteCpf = clienteRepository.findClienteByCpf(clienteDto.getCpf());
+        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(clienteDto.getCnpj());
+        if (Objects.nonNull(clienteCpf) && Objects.nonNull(clienteCnpj)){
+            throw new ClienteExistenteException(
+                    "documento informado ja possui cadastro"
+            );
+        } else {
+            clienteRepository.save(clienteEntidade);
+
+            }
 //        if(clienteRepository.existsByCpf(clienteDto.getCpf())){
 //            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF ou CNPJ já tem cadastro, por favor verificar!");
 //        }
-        ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
+        //ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
         clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-        return clienteRepository.save(clienteEntidade);
+        return clienteEntidade;
     }
 
     public List<ClienteEntidade> findAll() { //listar

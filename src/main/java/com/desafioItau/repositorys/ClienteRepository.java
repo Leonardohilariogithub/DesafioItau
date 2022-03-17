@@ -11,5 +11,6 @@ public interface ClienteRepository extends JpaRepository<ClienteEntidade, Long> 
 
     ClienteEntidade findClienteByCnpj(String cnpj);
 
+
     //boolean existsByCpf(String cpf);
 }
