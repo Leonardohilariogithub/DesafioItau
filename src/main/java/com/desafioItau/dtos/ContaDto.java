@@ -5,16 +5,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ContaDto {
+public class ContaDto implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -23,7 +24,7 @@ public class ContaDto {
     private String numeroDaConta;
 
     @Enumerated(EnumType.STRING)
-    private EnumTipoDaConta tipoDaConta;
+    private EnumTipoDaConta tipoDaConta;      // PESSOA_FISICA, PESSOA_JURIDICA, GOVERNAMENTAL
 
     private String digitoVerificador;
 
@@ -32,5 +33,4 @@ public class ContaDto {
     private String clienteCnpj;
 
     private BigDecimal saldo = BigDecimal.valueOf(0);
-
 }

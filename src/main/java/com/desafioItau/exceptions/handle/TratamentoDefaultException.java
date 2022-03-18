@@ -25,7 +25,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(ClienteExistenteException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Documento ja cadastrado!");
+        defaultException.setMensagem("Documento Inexistente ou Invalido!");
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
@@ -33,7 +33,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(MethodArgumentNotValidException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // informaçoes ta errada
-        defaultException.setMensagem(" Documento Invalido! ");
+        defaultException.setMensagem(" Cadastro Invalido, verificar informações! ");
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
@@ -54,14 +54,4 @@ public class TratamentoDefaultException {
     }
 }
 
-
-//      @ExceptionHandler(ClienteCpfException.class)
-//        HttpStatus status = HttpStatus.BAD_REQUEST;
-//        DefaultException error = DefaultException.builder()
-//                .title(status.getReasonPhrase())
-//                .status(status.value())
-//                .mensagem(e.getMessage()).build();
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error); // BAD RESQUEST
-//
-//    }
 

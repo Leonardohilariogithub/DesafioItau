@@ -1,11 +1,11 @@
 package com.desafioItau.entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -19,7 +19,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "tb_cliente")
 public class ClienteEntidade implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)// Gerar automaticamente
@@ -38,7 +37,9 @@ public class ClienteEntidade implements Serializable {
     @Column(nullable = false, length = 35)
     private String endereco;
 
-    private LocalDateTime registro;// regra que vou colocar
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy HH:mm:ss", locale = "pt-BR",
+            timezone = "America/São_Paulo")
+    private LocalDateTime dataHora = LocalDateTime.now();
 
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")

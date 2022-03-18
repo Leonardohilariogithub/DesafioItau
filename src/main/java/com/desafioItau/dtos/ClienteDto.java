@@ -10,15 +10,13 @@ import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClienteDto implements Serializable {
-
-    private static final long serialVersionUID = 1L; // DTO precisa do Serializable?
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -38,8 +36,4 @@ public class ClienteDto implements Serializable {
 
     @NotBlank
     private String endereco;
-
-    private LocalDateTime registro;// regra que vou colocar
-
-
 }

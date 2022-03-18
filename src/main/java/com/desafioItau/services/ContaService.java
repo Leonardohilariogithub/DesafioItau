@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,44 +27,36 @@ public class ContaService {
 
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
-
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta());
-
-
-
-        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null){
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null) {
             throw new ClienteCpfException("cliente nao pussui CPF para abrir conta FISICA!");
         }
-        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && contaDto.getClienteCnpj() == null){
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && contaDto.getClienteCnpj() == null) {
             throw new ClienteCpfException("cliente nao pussui CNPJ para abrir conta JURIDICA!");
         }
-        if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && contaDto.getClienteCpf() == null && contaDto.getClienteCnpj() == null){
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && contaDto.getClienteCpf() == null && contaDto.getClienteCnpj() == null) {
             throw new ClienteCpfException("Informe documento valido para abrir conta GOVERNAMENTAL!");
         }
-
         ClienteEntidade cliente = null; // se a pessoa existe
         if (Objects.nonNull(conta)) {
             throw new ClienteCpfException(String.format("conta de numero %s ja existe", contaDto.getNumeroDaConta()));
         }
-            if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null) {
-                cliente = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
-            }
-            if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
-                cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
-            }
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null) {
+            cliente = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
+        }
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
+            cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+        }
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null
+                || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
 
-            if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null
-                    || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
-
-                cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
-            }
-
+            cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+        }
         ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
         contaEntidade.setCliente(cliente);
         ClienteEntidade clienteEntidade = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
         ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
         Optional<ContaEntidade> verificarConta = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta()));
-        contaEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return contaRepository.save(contaEntidade);
     }
 
@@ -84,7 +73,7 @@ public class ContaService {
         if (Objects.nonNull(conta1)) {
             return conta1;
         } else {
-            throw new ClienteExistenteException("teste");
+            throw new ClienteExistenteException("Documento Inexistente ou Invalido!");
         }
     }
 
@@ -138,5 +127,5 @@ public class ContaService {
 //                    "cliente de documento %s nao encontrado ou não existe!", clienteCpf
 //            ));
 //        }
-    }
+}
 

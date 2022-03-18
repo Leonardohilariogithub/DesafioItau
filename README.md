@@ -1,7 +1,5 @@
-# DesafioItau
-DesafioItau
-
-Desafio BECCA:
+# Desafio Banco Itaú | Feito com você
+Desafio Banco Itaú | Feito com você
 
 Demanda: Construir dois serviços que serão responsáveis por deteminadas tarefas na conta bancária dos cliente de um banco
 * Cadastrar novos clientes na base de dados do banco
@@ -43,3 +41,47 @@ Requisitos técnicos na construção dos serviços:
 - Utilizar KAFKA para serviços de mensageria
 - Utilizar java 11
 - Utilizar boas práticas de programação (clean code)
+- -------------------------------------------------------------
+# Endpoints
+## Verbos HTTP
+
+POST
+- Criar um recurso no servidor.
+  Envia-se o recurso a ser criado.
+  Resposta com código 201(CREATED).
+
+GET
+- Obter um recurso do servidor
+  Pode se enviar parâmentros com critérios de busca.
+  Resposta de sucesso com código 200(OK) ou 404 (NOT FOUND)
+  quando o rerurso não foi encontrado no servidor.
+
+PUT
+- Atualizar um recurso no servidor.
+  Envia-se recurso com as informaçoes atualizadas a através
+  da URL, envia-se o identificador do recurso que irá receber a atualização.
+  Resposta com código 200(OK).
+
+DELETE
+- Deleta um recurso no servidor.
+  Envia-se o identificador do recurso que deseja-se
+  deletar através da URL.
+  Resposta com código 204(NO CONTENT).
+---------------------------------------------------------------
+# Códigos de Status
+
+### Verbo HTTP  --- Sucesso --- Erro
+
+POST   |  --->    201 (CREATED)  |---> 400 (BAD REQUEST)           
+GET    |  --->   200 (OK)   |---> 404 (NOT FOUND)                
+DELETE |  --->  204 (NO CONTENT)   | ---> 400 (BAD REQUEST)/ 404 (NOT FOUND)          
+PUT    |  --->   200 (OK) | --->  400/ 404 (NOT FOUND)
+
+## Tecnologias Usadas
+Java. Spring Boot. Maven. Intellij IDEA.
+H2. MySQL. Workbench. DBeaver.
+Git. GitHub. Postman. Redis. Kafka
+
+
+
+
