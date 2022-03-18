@@ -128,4 +128,15 @@ public class ContaService {
         }
         return contas;
     }
-}
+
+//    public void deletarDocumentoCpf(String clienteCpf) {
+//        ContaEntidade contaCpf =contaRepository.findContaByClienteCpf(clienteCpf);
+//        if (Objects.nonNull(contaCpf)) {
+//            contaRepository.delete(contaCpf);
+//        } else {
+//            throw new ClienteExistenteException(String.format(
+//                    "cliente de documento %s nao encontrado ou não existe!", clienteCpf
+//            ));
+//        }
+    }
+

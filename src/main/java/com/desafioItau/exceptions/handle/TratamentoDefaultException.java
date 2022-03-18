@@ -33,7 +33,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(MethodArgumentNotValidException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // informaçoes ta errada
-        defaultException.setMensagem(" Coloque Documento valido!! ");
+        defaultException.setMensagem(" Documento Invalido! ");
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
