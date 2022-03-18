@@ -9,8 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,22 +23,15 @@ public class ClienteService {
     @Transactional// evita dados quebrados
     public ClienteEntidade criarCliente(ClienteDto clienteDto) {
         ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
-
         ClienteEntidade clienteCpf = clienteRepository.findClienteByCpf(clienteDto.getCpf());
         ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(clienteDto.getCnpj());
         if (Objects.nonNull(clienteCpf) && Objects.nonNull(clienteCnpj)){
             throw new ClienteExistenteException(
-                    "documento informado ja possui cadastro"
+                    "Documento informado já possui cadastro! Informe outro Documento!"
             );
         } else {
             clienteRepository.save(clienteEntidade);
-
             }
-//        if(clienteRepository.existsByCpf(clienteDto.getCpf())){
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF ou CNPJ já tem cadastro, por favor verificar!");
-//        }
-        //ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
-        clienteEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
         return clienteEntidade;
     }
 
@@ -53,7 +44,7 @@ public class ClienteService {
         if (Objects.nonNull(cliente1)) {
             return cliente1;
         } else {
-            throw new ClienteExistenteException("teste");
+            throw new ClienteExistenteException("Documento Inexistente ou Invalido!");
         }
     }
 
@@ -62,7 +53,7 @@ public class ClienteService {
         if (Objects.nonNull(clienteCnpj)) {
             return clienteCnpj;
         } else {
-            throw new ClienteExistenteException("teste");
+            throw new ClienteExistenteException("Documento Inexistente ou Invalido!");
         }
     }
 
