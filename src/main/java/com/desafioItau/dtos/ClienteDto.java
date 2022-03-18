@@ -6,20 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
-
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClienteDto {
+public class ClienteDto implements Serializable {
+
+    private static final long serialVersionUID = 1L; // DTO precisa do Serializable?
 
     private Long id;
 
-    @NotBlank //obrigatorio
+    @NotBlank(message = "O nome não pode ficar em branco")
     private String nome;
 
     @Column(unique = true)
@@ -30,7 +33,7 @@ public class ClienteDto {
     @CNPJ
     private String cnpj;
 
-    @NotBlank
+    @NotNull(message = "O nome não pode ser nulo")
     private String telefone;
 
     @NotBlank

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)//pemitir acessar de qualquer fonte
@@ -26,42 +27,31 @@ public class OperacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(operacaoAtual);
     }
 
-    // 3 post e 2 get@RequestBody @Valid
-    // get pelo param
-
-//    public ResponseEntity<Object> salvarOperacao(@RequestBody @Valid OperacaoDto operacaoDto){
-//        var operacaoEntidade = new OperacaoEntidade();
-//        BeanUtils.copyProperties(operacaoDto, operacaoEntidade);
-//        operacaoEntidade.setRegistro(LocalDateTime.now(ZoneId.of("UTC")));
-//        return ResponseEntity.status(HttpStatus.CREATED).body(operacaoService.save(operacaoEntidade));
+//    @PostMapping("/saque")
+//    public ResponseEntity<?> sacar(@RequestBody @Valid OperacaoDto operacaoDto){
+//        OperacaoEntidade operacaoAtual = new OperacaoEntidade();
+//        BeanUtils.copyProperties(operacaoDto, operacaoAtual);
+//        return ResponseEntity.status(HttpStatus.OK).body(operacaoService.sacar(operacaoAtual));
 //    }
 
-//    @GetMapping
-//    public ResponseEntity<List<OperacaoEntidade>> listarOperacao(){
-//        return ResponseEntity.status(HttpStatus.OK).body(operacaoService.findAll());
-//    }
+    @PostMapping("/transferencia")
+    public ResponseEntity<?> transferencia(@RequestBody @Valid OperacaoDto operacaoDto){
+        OperacaoEntidade operacaoAtual = new OperacaoEntidade();
+        BeanUtils.copyProperties(operacaoDto, operacaoAtual);
+        operacaoService.transferencia(operacaoAtual);
+        return ResponseEntity.status(HttpStatus.OK).body(operacaoAtual);
+    }
+
+    @GetMapping("/saldo")
+    public ResponseEntity<?> saldo(@RequestBody @Valid OperacaoDto operacaoDto){
+        System.out.println(operacaoDto);
+        BigDecimal saldoDaConta = operacaoService.saldo(operacaoDto.getNumeroDaConta());
+        return ResponseEntity.ok().body("SALDO: R$" + saldoDaConta);
+    }
 //
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Object>obterOperacao(@PathVariable Long id){
-//        Optional<OperacaoEntidade> operacaoObtida = operacaoService.findById(id);
-//        return ResponseEntity.status(HttpStatus.OK).body(operacaoObtida.get());
-//    }
-//
-//    @PutMapping("/atualizar/{id}")
-//    public ResponseEntity<Object> atualizarOperacao(@PathVariable @RequestParam(value = "id") Long id, @RequestBody @Valid OperacaoDto operacaoDto){
-//        OperacaoEntidade conta = new OperacaoEntidade();
-//        BeanUtils.copyProperties(operacaoDto, conta);
-//        operacaoService.atualizar(id, conta);     //PUT usando PARANS- KEY id -VALUE -2
-//        return ResponseEntity.status(HttpStatus.OK).body(conta);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Object> deletarOperacao(@PathVariable Long id){
-//        Optional<OperacaoEntidade> operacaoDeletada = operacaoService.findById(id);
-//        if (!operacaoDeletada.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existe nenhuma Operação!");
-//        }
-//        operacaoService.delete(operacaoDeletada.get());
-//        return ResponseEntity.status(HttpStatus.OK).body("Operação Deletada");
+//    @GetMapping("/extrato/")
+//    public ResponseEntity<List<OperacaoEntidade>> extrato(@RequestParam(name = "numeroDaConta") String numeroDaConta){
+//        List<OperacaoEntidade> operacaoEntidade = operacaoService.extrato(numeroDaConta);
+//        return ResponseEntity.ok(operacaoEntidade);
 //    }
 }

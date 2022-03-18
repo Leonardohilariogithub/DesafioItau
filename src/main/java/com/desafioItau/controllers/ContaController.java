@@ -9,7 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -62,15 +61,15 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.OK).body(documento);
     }
 
-    @DeleteMapping("deletar/")
+    @DeleteMapping("/deletar/")
     public ResponseEntity<?> deletarConta(@RequestParam(name = "numeroDaConta") String numeroDaConta){
         contaService.deletarConta(numeroDaConta);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-//    @DeleteMapping("deletarContaPeloDocumento/")
-//    public ResponseEntity<?> deletarDocumento(@RequestParam(name = "clienteCpf") String clienteCpf){
-//        contaService.deletarDocumento(clienteCpf);
+//    @DeleteMapping("/deletarContaPeloDocumentoCpf/")
+//    public ResponseEntity<?> deletarDocumentoCpf(@RequestParam(name = "clienteCpf") String clienteCpf){
+//        contaService.deletarDocumentoCpf(clienteCpf);
 //        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 //    }
 }

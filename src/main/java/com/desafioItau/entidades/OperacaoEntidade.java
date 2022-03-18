@@ -1,6 +1,8 @@
 package com.desafioItau.entidades;
 
 import com.desafioItau.enums.EnumOperacao;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "tb_operacao")
+@JsonInclude(JsonInclude.Include.NON_NULL) // nulo nao vai retornar
 public class OperacaoEntidade implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,8 +38,11 @@ public class OperacaoEntidade implements Serializable {
     private String mensagem;
     private String aviso;
 
-    @Column(nullable = false)
-    private LocalDateTime registro;// regra que vou colocar     EnumOperacao tipoDaOperacao,
+//    @Column(nullable = false)
+//    private LocalDateTime registro;// regra que vou colocar     EnumOperacao tipoDaOperacao,
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy HH:mm:ss", locale = "pt-BR",
+            timezone = "America/São_Paulo")
+    private LocalDateTime dataHora = LocalDateTime.now();
 
 }
