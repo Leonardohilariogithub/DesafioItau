@@ -28,7 +28,7 @@ public class ContaService {
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta());
-        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null) {
+        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null ) {
             throw new ClienteCpfException("cliente nao pussui CPF para abrir conta FISICA!");
         }
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && contaDto.getClienteCnpj() == null) {
