@@ -1,8 +1,6 @@
 package com.desafioItau.exceptions.handle;
 
-import com.desafioItau.exceptions.ClienteCpfException;
-import com.desafioItau.exceptions.ClienteExistenteException;
-import com.desafioItau.exceptions.HttpMessageNotReadableException;
+import com.desafioItau.exceptions.*;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +48,22 @@ public class TratamentoDefaultException {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
         defaultException.setMensagem("Apenas PESSOA_FISICA, PESSOA_JURIDICA e GOVERNAMENTAL");
+        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
+
+    }
+    @ExceptionHandler(ContaNaoEncontradaException.class)
+    public ResponseEntity<DefaultException> handle(ContaNaoEncontradaException e) {
+        DefaultException defaultException = new DefaultException();
+        defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
+        defaultException.setMensagem("Conta não Encontrada!");
+        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
+
+    }
+    @ExceptionHandler(OperacoesException.class)
+    public ResponseEntity<DefaultException> handle(OperacoesException e) {
+        DefaultException defaultException = new DefaultException();
+        defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
+        defaultException.setMensagem("Transferencia Invalida!!");
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 }
