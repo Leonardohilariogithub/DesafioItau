@@ -28,12 +28,12 @@ public class OperacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(operacaoAtual);
     }
 
-//    @PostMapping("/saque")
-//    public ResponseEntity<?> sacar(@RequestBody @Valid OperacaoDto operacaoDto){
-//        OperacaoEntidade operacaoAtual = new OperacaoEntidade();
-//        BeanUtils.copyProperties(operacaoDto, operacaoAtual);
-//        return ResponseEntity.status(HttpStatus.OK).body(operacaoService.sacar(operacaoAtual));
-//    }
+    @PostMapping("/saque")
+    public ResponseEntity<?> sacar(@RequestBody @Valid OperacaoDto operacaoDto){
+        OperacaoEntidade operacaoAtual = new OperacaoEntidade();
+        BeanUtils.copyProperties(operacaoDto, operacaoAtual);
+        return ResponseEntity.status(HttpStatus.OK).body(operacaoService.sacar(operacaoAtual));
+    }
 
     @PostMapping("/transferencia")
     public ResponseEntity<?> transferencia(@RequestBody @Valid OperacaoDto operacaoDto){

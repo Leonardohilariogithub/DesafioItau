@@ -66,6 +66,13 @@ public class TratamentoDefaultException {
         defaultException.setMensagem("Transferencia Invalida!!");
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<DefaultException> handle(SaldoInsuficienteException e) {
+        DefaultException defaultException = new DefaultException();
+        defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
+        defaultException.setMensagem("Saldo insuficiente!");
+        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
+    }
 }
 
 
