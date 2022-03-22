@@ -33,4 +33,8 @@ public class ContaDto implements Serializable {
     private String clienteCnpj;
 
     private BigDecimal saldo = BigDecimal.valueOf(0);
+
+    private int saqueSemTaxa;
+
+    private String aviso;
 }

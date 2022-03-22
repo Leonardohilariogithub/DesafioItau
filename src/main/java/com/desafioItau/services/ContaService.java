@@ -43,14 +43,18 @@ public class ContaService {
         }
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null) {
             cliente = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
+            contaDto.setSaqueSemTaxa(5);
         }
-        if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
+        else if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
             cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+            contaDto.setSaqueSemTaxa(50);
         }
-        if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null
+        else if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null
                 || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
 
             cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+            contaDto.setSaqueSemTaxa(250);
+
         }
         ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
         contaEntidade.setCliente(cliente);

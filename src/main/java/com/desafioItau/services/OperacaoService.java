@@ -12,7 +12,6 @@ import com.desafioItau.repositorys.ContaRepository;
 import com.desafioItau.repositorys.OperacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -56,9 +55,8 @@ public class OperacaoService {
                     String.format("Conta não encontrada, %s", operacaoEntidade.getNumeroDaConta()));
         });
         double valorSaque = operacaoEntidade.getValorDaTransação().doubleValue();
-        double valorSaldo = contaEntidade.getSaldo().doubleValue();
 
-        verificarSaldo(valorSaque, valorSaldo);
+        double valorSaldo = contaEntidade.getSaldo().doubleValue();
 
         String alerta = null;
 
@@ -67,10 +65,17 @@ public class OperacaoService {
         EnumTipoDaConta tipoDaConta = contaEntidade.getTipoDaConta();
         String numConta = contaEntidade.getNumeroDaConta();
 
-        GetQuantidadeDeSaque buscarQuantidadeDeSaque = buscarSaque.getQuantidadeDeSaque(numConta);
-        Long quantidaDeSaque = buscarQuantidaDeDeSaque.getQuantidadeDeSaque();
+//        GetQuantidadeDeSaque buscarQuantidadeDeSaque = buscarSaque.getQuantidadeDeSaque(numConta);
+//        Long quantidaDeSaque = buscarQuantidaDeDeSaque.getQuantidadeDeSaque();
+        var quantidaDeSaque = contaEntidade.getSaqueSemTaxa();
 
+        if (valorSaque > valorSaldo){
+            throw new SaldoInsuficienteException(String.format(
+                    "Saldo insuficiente! SALDO: R$ %s", valorSaldo
+            ));
+        }
         if (tipoDaConta == EnumTipoDaConta.PESSOA_FISICA || tipoDaConta == EnumTipoDaConta.PESSOA_JURIDICA) {
+
             if (quantidaDeSaque > 0) {
                 double novoValorSaldo = valorSaldo - valorSaque;
                 contaEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
@@ -83,8 +88,9 @@ public class OperacaoService {
             } else {
                 if (valorSaque + taxa > valorSaldo) {
                     throw new SaldoInsuficienteException(String.format(
-                            "Saldo insuficiente para sacar %s", taxa));
+                            "Saldo insuficiente para sacar devida a taxa de %s", taxa));
                 }
+
                 double novoValorSaldo = valorSaldo - (valorSaque + taxa);
                 contaEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
                 operacaoEntidade.setTaxa(BigDecimal.valueOf(taxa));
@@ -94,6 +100,9 @@ public class OperacaoService {
 
         } else if (tipoDaConta == EnumTipoDaConta.GOVERNAMENTAL) {
             taxa = EnumTipoDaConta.GOVERNAMENTAL.getTaxa();
+
+
+
             if (quantidaDeSaque > 0) {
                 double novoValorSaldo = valorSaldo - valorSaque;
                 contaEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
@@ -107,7 +116,7 @@ public class OperacaoService {
             } else {
                 if (valorSaque + taxa > valorSaldo) {
                     throw new SaldoInsuficienteException(String.format(
-                            "Saldo insuficiente para saque devido a taxa %s", taxa));
+                            "Saldo insuficiente para sacar devida a taxa de %s", taxa));
                 }
 
                 double novoValorSaldo = valorSaldo - (valorSaque + taxa);
@@ -117,6 +126,12 @@ public class OperacaoService {
                 alerta = String.format(LIMITE_DE_SAQUES_ATIGIDO, operacaoEntidade.getTaxa());
             }
         }
+        contaRepository.save(contaEntidade);
+        operacaoEntidade.setSaldo(contaEntidade.getSaldo());
+        operacaoEntidade.setMensagem("Saque realizado com sucesso!");
+        operacaoEntidade.setAviso(alerta);
+        operacaoEntidade.setTipoDaOperacao(EnumOperacao.SAQUE);
+        return operacaoRepository.save(operacaoEntidade);
     }
 
 //        KafkaService.send(contaEntidade);
