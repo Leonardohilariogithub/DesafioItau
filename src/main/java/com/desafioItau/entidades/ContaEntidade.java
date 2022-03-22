@@ -44,6 +44,10 @@ public class ContaEntidade implements Serializable {
 
     private BigDecimal saldo = BigDecimal.valueOf(0);
 
+    private int saqueSemTaxa;
+
+    private String aviso;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy HH:mm:ss", locale = "pt-BR",
             timezone = "America/São_Paulo")
     private LocalDateTime dataHora = LocalDateTime.now();

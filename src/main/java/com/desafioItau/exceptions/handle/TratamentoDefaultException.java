@@ -70,7 +70,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(SaldoInsuficienteException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Saldo insuficiente!");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 }
