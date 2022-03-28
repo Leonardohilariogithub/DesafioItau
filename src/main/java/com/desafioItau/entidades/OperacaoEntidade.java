@@ -32,7 +32,7 @@ public class OperacaoEntidade implements Serializable {
     private String numeroDaContaDestino;
 
     @Enumerated(EnumType.STRING)
-    private EnumOperacao tipoDaOperacao;        //TRANSFERENCIA(1),SAQUE(2), DEPOSITO(3);
+    private EnumOperacao tipoDaOperacao;     //TRANSFERENCIA(1),SAQUE(2), DEPOSITO(3);
 
     @Column(nullable = false)
     private BigDecimal valorDaTransação;
