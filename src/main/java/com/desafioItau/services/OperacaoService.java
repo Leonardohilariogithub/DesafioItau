@@ -29,6 +29,8 @@ public class OperacaoService {
     private final ContaRepository contaRepository;
     private final ContaService contaService;
 
+    private final ProducerSaqueService producerSaqueService; //kafka
+
     public OperacaoEntidade depositar(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
             throw new ClienteCpfException(" o valor nao é valido!"); // exeception OPERAÇOES
@@ -65,8 +67,6 @@ public class OperacaoService {
         EnumTipoDaConta tipoDaConta = contaEntidade.getTipoDaConta();
         String numConta = contaEntidade.getNumeroDaConta();
 
-//        GetQuantidadeDeSaque buscarQuantidadeDeSaque = buscarSaque.getQuantidadeDeSaque(numConta);
-//        Long quantidaDeSaque = buscarQuantidaDeDeSaque.getQuantidadeDeSaque();
         var quantidaDeSaque = contaEntidade.getSaqueSemTaxa();
 
         if (valorSaque > valorSaldo){
@@ -101,8 +101,6 @@ public class OperacaoService {
         } else if (tipoDaConta == EnumTipoDaConta.GOVERNAMENTAL) {
             taxa = EnumTipoDaConta.GOVERNAMENTAL.getTaxa();
 
-
-
             if (quantidaDeSaque > 0) {
                 double novoValorSaldo = valorSaldo - valorSaque;
                 contaEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
@@ -131,16 +129,11 @@ public class OperacaoService {
         operacaoEntidade.setMensagem("Saque realizado com sucesso!");
         operacaoEntidade.setAviso(alerta);
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.SAQUE);
+
+        producerSaqueService.send(operacaoEntidade);
+
         return operacaoRepository.save(operacaoEntidade);
     }
-
-//        KafkaService.send(contaEntidade);
-//        contaRepository.save(contaEntidade);
-//        operacaoEntidade.setSaldo(contaEntidade.getSaldo());
-//        operacaoEntidade.setMensagem("Saque realizado com sucesso!");
-//        operacaoEntidade.setAviso(alerta);
-//        operacaoEntidade.setTipoDaOperacao(EnumOperacao.SAQUE);
-//        return operacaoRepository.save(operacaoEntidade);
 
     public OperacaoEntidade transferencia(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
@@ -171,7 +164,7 @@ public class OperacaoService {
         contaRepository.save(conta);
         contaRepository.save(contaDestino);
 
-        //operacaoEntidade.setSaldo(BigDecimal.valueOf(novoSaldoContaOrigem));
+        operacaoEntidade.setSaldo(BigDecimal.valueOf(novoSaldoContaOrigem));
 
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.TRANSFERENCIA);
 

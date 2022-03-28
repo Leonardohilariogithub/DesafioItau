@@ -3,6 +3,7 @@ package com.desafioItau.services;
 import com.desafioItau.dtos.ContaDto;
 import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.entidades.OperacaoEntidade;
 import com.desafioItau.enums.EnumTipoDaConta;
 import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.exceptions.ClienteExistenteException;
@@ -21,9 +22,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ContaService {
 
-    private final ContaRepository contaRepository;  //Utilizar metodos prontos do JPARepository
+    private final ContaRepository contaRepository;
     private final ModelMapper modelMapper;
     private final ClienteRepository clienteRepository;
+
+    private final ProducerContaService producerContaService;  //kafka
 
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
@@ -61,6 +64,9 @@ public class ContaService {
         ClienteEntidade clienteEntidade = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
         ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
         Optional<ContaEntidade> verificarConta = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta()));
+
+        producerContaService.send(contaEntidade);//Kafka
+
         return contaRepository.save(contaEntidade);
     }
 
