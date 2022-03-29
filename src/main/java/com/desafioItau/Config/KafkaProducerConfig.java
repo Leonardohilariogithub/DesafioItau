@@ -1,6 +1,9 @@
 package com.desafioItau.Config;
 
+import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.entidades.OperacaoEntidade;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +28,22 @@ public class KafkaProducerConfig {
         return new NewTopic(topic, 3,(short) 1) ;
     }
 
-    @Bean
-    public ProducerFactory<String, Object> ContaProducerFactory(KafkaProperties kafkaProperties) {
+    @Bean(value = "contaProducerFactory")
+    public ProducerFactory<String, ContaEntidade> ContaProducerFactory(KafkaProperties kafkaProperties) {
         return new DefaultKafkaProducerFactory<>(kafkaProperties.buildProducerProperties());
     }
 
-    @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
+    @Bean(value = "kafkaTemplateConta")
+    public KafkaTemplate<String, ContaEntidade> kafkaTemplateConta(@Qualifier(value = "contaProducerFactory") ProducerFactory<String, ContaEntidade> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
+    }
+    @Bean(value = "operacaoProducerFactory")
+    public ProducerFactory<String, OperacaoEntidade> OperacaoProducerFactory(KafkaProperties kafkaProperties) {
+        return new DefaultKafkaProducerFactory<>(kafkaProperties.buildProducerProperties());
+    }
+
+    @Bean(value = "kafkaTemplateOperacao")
+    public KafkaTemplate<String, OperacaoEntidade> kafkaTemplateOperacao(@Qualifier(value = "operacaoProducerFactory") ProducerFactory<String, OperacaoEntidade> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }
