@@ -3,7 +3,6 @@ package com.desafioItau.services;
 import com.desafioItau.dtos.ContaDto;
 import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
-import com.desafioItau.entidades.OperacaoEntidade;
 import com.desafioItau.enums.EnumTipoDaConta;
 import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.exceptions.ClienteExistenteException;
