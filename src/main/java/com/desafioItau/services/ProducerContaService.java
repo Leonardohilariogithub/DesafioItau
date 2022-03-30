@@ -19,6 +19,7 @@ public class ProducerContaService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProducerContaService.class);
     private final String topic;
+
     @Qualifier(value = "kafkaTemplateConta")
     private final KafkaTemplate<String, ContaEntidade> kafkaTemplate; //kafkaTemplate é apenas para produzir
 

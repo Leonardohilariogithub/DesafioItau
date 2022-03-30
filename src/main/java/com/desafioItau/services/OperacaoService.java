@@ -130,7 +130,7 @@ public class OperacaoService {
         operacaoEntidade.setAviso(alerta);
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.SAQUE);
 
-        producerSaqueService.send(operacaoEntidade);
+        producerSaqueService.send(operacaoEntidade);  //Kafka
 
         return operacaoRepository.save(operacaoEntidade);
     }

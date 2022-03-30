@@ -20,6 +20,7 @@ public class ProducerSaqueService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProducerSaqueService.class);
     private final String topic;
+
     @Qualifier(value = "kafkaTemplateOperacao")
     private final KafkaTemplate<String, OperacaoEntidade> kafkaTemplate; //kafkaTemplate é apenas para produzir
 
