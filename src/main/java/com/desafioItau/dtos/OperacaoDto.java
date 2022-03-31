@@ -41,5 +41,4 @@ public class OperacaoDto implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy HH:mm:ss", locale = "pt-BR",
             timezone = "America/São_Paulo")
     private LocalDateTime dataHora = LocalDateTime.now();
-
 }

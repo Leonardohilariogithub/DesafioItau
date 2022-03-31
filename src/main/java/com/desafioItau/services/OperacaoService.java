@@ -28,8 +28,7 @@ public class OperacaoService {
     private final OperacaoRepository operacaoRepository; //Utilizar metodos prontos do JPARepository
     private final ContaRepository contaRepository;
     private final ContaService contaService;
-
-    private final ProducerSaqueService producerSaqueService; //kafka
+    private final ProducerOperacaoSaqueService producerSaqueService; //kafka
 
     public OperacaoEntidade depositar(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {

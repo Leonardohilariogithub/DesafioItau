@@ -11,20 +11,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.stereotype.Service;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
-public class ProducerSaqueService {
+public class ProducerOperacaoSaqueService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProducerSaqueService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProducerOperacaoSaqueService.class);
     private final String topic;
 
     @Qualifier(value = "kafkaTemplateOperacao")
     private final KafkaTemplate<String, OperacaoEntidade> kafkaTemplate; //kafkaTemplate é apenas para produzir
 
-    public ProducerSaqueService(@Value("${topic.name}") String topic, KafkaTemplate<String, OperacaoEntidade> kafkaTemplate) {
+    public ProducerOperacaoSaqueService(@Value("${topic.name}") String topic, KafkaTemplate<String, OperacaoEntidade> kafkaTemplate) {
         this.topic = topic;
         this.kafkaTemplate = kafkaTemplate;
     }

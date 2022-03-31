@@ -15,5 +15,4 @@ public enum EnumOperacao {
 
     private int codigo;
     public String descricao;
-
 }
