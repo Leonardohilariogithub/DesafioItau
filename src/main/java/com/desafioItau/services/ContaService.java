@@ -24,7 +24,6 @@ public class ContaService {
     private final ContaRepository contaRepository;
     private final ModelMapper modelMapper;
     private final ClienteRepository clienteRepository;
-
     private final ProducerContaService producerContaService;  //kafka
 
     @Transactional // evita dados quebrados
