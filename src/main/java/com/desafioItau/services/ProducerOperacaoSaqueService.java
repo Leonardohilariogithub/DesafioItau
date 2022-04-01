@@ -32,7 +32,7 @@ public class ProducerOperacaoSaqueService {
 
         List<Header> headers = List.of(new RecordHeader(KafkaHeaders.TOPIC,topic.getBytes(StandardCharsets.UTF_8)));
 
-        var producerRecord = new ProducerRecord<String,OperacaoEntidade>(topic,null,null,null,operacaoEntidade, headers);
+        var producerRecord = new ProducerRecord<String,OperacaoEntidade>("novoSaque",null,null,null,operacaoEntidade, headers);
         kafkaTemplate.send(producerRecord).addCallback(
                 success -> logger.info("Messagem send" +  operacaoEntidade.toString()
                         + operacaoEntidade),

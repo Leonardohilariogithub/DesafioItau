@@ -2,6 +2,7 @@ package com.desafioItau.controllers;
 
 import com.desafioItau.dtos.ContaDto;
 import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.services.ContaService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -66,10 +67,4 @@ public class ContaController {
         contaService.deletarConta(numeroDaConta);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-//    @DeleteMapping("/deletarContaPeloDocumentoCpf/")
-//    public ResponseEntity<?> deletarDocumentoCpf(@RequestParam(name = "clienteCpf") String clienteCpf){
-//        contaService.deletarDocumentoCpf(clienteCpf);
-//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-//    }
 }

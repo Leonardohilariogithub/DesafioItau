@@ -23,7 +23,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(ClienteExistenteException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Documento Inexistente ou Invalido!");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
@@ -31,7 +31,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(MethodArgumentNotValidException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // informaçoes ta errada
-        defaultException.setMensagem(" Cadastro Invalido, verificar informações! ");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
@@ -39,7 +39,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(IncorrectResultSizeDataAccessException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Documento ja cadastrado!");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
@@ -47,7 +47,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(HttpMessageNotReadableException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Apenas PESSOA_FISICA, PESSOA_JURIDICA e GOVERNAMENTAL");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
 
     }
@@ -55,7 +55,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(ContaNaoEncontradaException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Conta não Encontrada!");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
 
     }
@@ -63,7 +63,7 @@ public class TratamentoDefaultException {
     public ResponseEntity<DefaultException> handle(OperacoesException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem("Transferencia Invalida!!");
+        defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
     @ExceptionHandler(SaldoInsuficienteException.class)
