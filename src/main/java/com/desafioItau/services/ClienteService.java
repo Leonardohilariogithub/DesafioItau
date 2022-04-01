@@ -25,11 +25,13 @@ public class ClienteService {
         ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
         ClienteEntidade clienteCpf = clienteRepository.findClienteByCpf(clienteDto.getCpf());
         ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(clienteDto.getCnpj());
-        if (Objects.nonNull(clienteCpf) && Objects.nonNull(clienteCnpj)){
+        if (Objects.nonNull(clienteCpf) && Objects.nonNull(clienteCnpj)) {
             throw new ClienteExistenteException(
                     "Documento informado já possui cadastro! Informe outro Documento!"
             );
-        } else {
+        }
+
+        else {
             clienteRepository.save(clienteEntidade);
             }
         return clienteEntidade;

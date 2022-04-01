@@ -2,6 +2,7 @@ package com.desafioItau.controllers;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
+import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.services.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,9 @@ public class ClienteController{
 
     @PostMapping(value = "/cadastro")
     public ResponseEntity<Object> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
+        if (clienteDto.getCpf() == null && clienteDto.getCnpj() == null){
+            throw new ClienteCpfException(" voce tem que informar documento para fazer cadastro"); //troca exeption bad request
+        }
         var clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(clienteDto));

@@ -8,6 +8,5 @@ import java.util.List;
 @Repository
 public interface OperacaoRepository extends JpaRepository<OperacaoEntidade, Long> {
     List<OperacaoEntidade> findExtratoByNumeroDaConta(String numeroDaConta);
-
     List<OperacaoEntidade> findExtratoByNumeroDaContaDestino(String numeroDaConta);
 }

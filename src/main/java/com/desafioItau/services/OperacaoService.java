@@ -12,6 +12,9 @@ import com.desafioItau.repositorys.ContaRepository;
 import com.desafioItau.repositorys.OperacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,6 +32,8 @@ public class OperacaoService {
     private final ContaRepository contaRepository;
     private final ContaService contaService;
     private final ProducerOperacaoSaqueService producerSaqueService; //kafka
+
+    private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost",6379);
 
     public OperacaoEntidade depositar(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
@@ -51,12 +56,14 @@ public class OperacaoService {
 
     @Transactional
     public OperacaoEntidade sacar(OperacaoEntidade operacaoEntidade) {
+
+        Jedis jedis = pool.getResource();
+
         ContaEntidade contaEntidade = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta())).orElseThrow(() -> {
             throw new ContaNaoEncontradaException(
                     String.format("Conta não encontrada, %s", operacaoEntidade.getNumeroDaConta()));
         });
         double valorSaque = operacaoEntidade.getValorDaTransação().doubleValue();
-
         double valorSaldo = contaEntidade.getSaldo().doubleValue();
 
         String alerta = null;
@@ -66,15 +73,14 @@ public class OperacaoService {
         EnumTipoDaConta tipoDaConta = contaEntidade.getTipoDaConta();
         String numConta = contaEntidade.getNumeroDaConta();
 
-        var quantidaDeSaque = contaEntidade.getSaqueSemTaxa();
+        var quantidaDeSaque = Integer.parseInt(jedis.get(operacaoEntidade.getNumeroDaConta())); //redis
 
         if (valorSaque > valorSaldo){
             throw new SaldoInsuficienteException(String.format(
                     "Saldo insuficiente! SALDO: R$ %s", valorSaldo
             ));
         }
-        if (tipoDaConta == EnumTipoDaConta.PESSOA_FISICA || tipoDaConta == EnumTipoDaConta.PESSOA_JURIDICA) {
-
+        if (tipoDaConta == EnumTipoDaConta.PESSOA_FISICA || tipoDaConta == EnumTipoDaConta.PESSOA_JURIDICA) { //Taxa é igual
             if (quantidaDeSaque > 0) {
                 double novoValorSaldo = valorSaldo - valorSaque;
                 contaEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
@@ -82,7 +88,7 @@ public class OperacaoService {
 
                 contaEntidade.setSaqueSemTaxa(Math.toIntExact(quantidaDeSaque));
 
-                alerta = String.format(QUANTIDADE_DE_SAQUES_GRATUITOS, contaEntidade.getSaqueSemTaxa());
+                alerta = String.format(QUANTIDADE_DE_SAQUES_GRATUITOS, contaEntidade.getSaqueSemTaxa()); //Quantidade
 
             } else {
                 if (valorSaque + taxa > valorSaldo) {
@@ -99,11 +105,9 @@ public class OperacaoService {
 
         } else if (tipoDaConta == EnumTipoDaConta.GOVERNAMENTAL) {
             taxa = EnumTipoDaConta.GOVERNAMENTAL.getTaxa();
-
             if (quantidaDeSaque > 0) {
                 double novoValorSaldo = valorSaldo - valorSaque;
                 contaEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
-
                 quantidaDeSaque--;
 
                 contaEntidade.setSaqueSemTaxa(Math.toIntExact(quantidaDeSaque));
@@ -123,31 +127,36 @@ public class OperacaoService {
                 alerta = String.format(LIMITE_DE_SAQUES_ATIGIDO, operacaoEntidade.getTaxa());
             }
         }
+        producerSaqueService.send(operacaoEntidade);  //Kafka
+
         contaRepository.save(contaEntidade);
         operacaoEntidade.setSaldo(contaEntidade.getSaldo());
         operacaoEntidade.setMensagem("Saque realizado com sucesso!");
         operacaoEntidade.setAviso(alerta);
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.SAQUE);
+        operacaoEntidade.setConta(contaEntidade);
 
-        producerSaqueService.send(operacaoEntidade);  //Kafka
 
         return operacaoRepository.save(operacaoEntidade);
     }
 
     public OperacaoEntidade transferencia(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
-            throw new OperacoesException(" o valor nao é valido!");
+            throw new OperacoesException(" O valor nao é valido!");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta());
-        if (Objects.isNull(conta)) {
+        if (Objects.isNull(conta)) {// criar exception para contanao existe etorno not faid
             throw new ClienteCpfException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaConta()));
         }
         ContaEntidade contaDestino = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaContaDestino());
-        if (Objects.isNull(contaDestino)) {
+        if (Objects.isNull(contaDestino)) {// criar exception para contanao existe etorno not faid
             throw new ClienteCpfException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaContaDestino()));
         }
-        if (conta.getSaldo().doubleValue() - operacaoEntidade.getValorDaTransação().doubleValue() < 0) {
+        if (conta.getSaldo().doubleValue() - operacaoEntidade.getValorDaTransação().doubleValue() < 0) {// criar exception para contanao existe etorno bad request
             throw new ClienteCpfException(String.format(" A conta não tem saldo para operação!!!", operacaoEntidade.getNumeroDaContaDestino()));
+        }
+        if (conta == contaDestino) { // criar exception para transação voltar bad request
+            throw new ClienteCpfException("transação nao autorizada, conta origem não pode ser igual a conta destino!");
         }
 
         double saldoContaOrigem = conta.getSaldo().doubleValue();

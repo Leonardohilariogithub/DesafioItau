@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -24,10 +27,17 @@ public class ContaService {
     private final ContaRepository contaRepository;
     private final ModelMapper modelMapper;
     private final ClienteRepository clienteRepository;
-    private final ProducerContaService producerContaService;  //kafka
+    //private final ProducerContaService producerContaService;  //kafka
+
+    private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost",6379);
 
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
+
+        if (clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) == null || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj())== null){
+            throw new ClienteExistenteException("cliente nao EXISTE!!!!");
+        }
+
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta());
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null ) {
             throw new ClienteCpfException("cliente nao pussui CPF para abrir conta FISICA!");
@@ -55,15 +65,25 @@ public class ContaService {
 
             cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
             contaDto.setSaqueSemTaxa(250);
-
         }
-        ContaEntidade contaEntidade = modelMapper.map(contaDto, ContaEntidade.class);
-        contaEntidade.setCliente(cliente);
-        ClienteEntidade clienteEntidade = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
-        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
-        Optional<ContaEntidade> verificarConta = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta()));
 
-        producerContaService.send(contaEntidade);//Kafka
+        ContaEntidade contaEntidade = new ContaEntidade();
+        contaEntidade.setTipoDaConta(contaDto.getTipoDaConta());
+        contaEntidade.setSaqueSemTaxa(contaDto.getSaqueSemTaxa());
+        contaEntidade.setNumeroDaConta(contaDto.getNumeroDaConta());
+        contaEntidade.setDigitoVerificador(contaDto.getDigitoVerificador());
+        contaEntidade.setAgencia(contaDto.getAgencia());
+
+        contaEntidade.setCliente(cliente);
+//        ClienteEntidade clienteEntidade = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
+//        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+        //Optional<ContaEntidade> verificarConta = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta()));
+
+        Jedis jedis = pool.getResource();
+
+        jedis.set(contaEntidade.getNumeroDaConta(), Integer.toString(contaEntidade.getSaqueSemTaxa()));
+
+        //producerContaService.send(contaEntidade);//Kafka
 
         return contaRepository.save(contaEntidade);
     }
@@ -104,10 +124,18 @@ public class ContaService {
     public void deletarConta(String numeroDaConta) {
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(numeroDaConta);
         if (Objects.nonNull(conta)) {
-            contaRepository.delete(conta);
+            if (conta.getSaldo().doubleValue() == 0) {
+                contaRepository.delete(conta);
+            }
+            else {
+                throw new ClienteExistenteException(String.format(  // criar exception para transação voltar bad request
+                        "Para excluir a conta o saldo deve estar zerado, " + "você possui R$%s de saldo!",
+                        conta.getSaldo()));
+            }
+
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado ou não existe!", numeroDaConta
+                    "Cliente de documento %s nao encontrado ou não existe!", numeroDaConta
             ));
         }
     }
@@ -125,15 +153,5 @@ public class ContaService {
         }
         return contas;
     }
-
-//    public void deletarDocumentoCpf(String clienteCpf) {
-//        ContaEntidade contaCpf =contaRepository.findContaByClienteCpf(clienteCpf);
-//        if (Objects.nonNull(contaCpf)) {
-//            contaRepository.delete(contaCpf);
-//        } else {
-//            throw new ClienteExistenteException(String.format(
-//                    "cliente de documento %s nao encontrado ou não existe!", clienteCpf
-//            ));
-//        }
 }
 
