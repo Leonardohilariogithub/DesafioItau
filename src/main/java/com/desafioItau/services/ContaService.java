@@ -6,6 +6,8 @@ import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.enums.EnumTipoDaConta;
 import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.exceptions.ClienteExistenteException;
+import com.desafioItau.exceptions.ContaNaoEncontradaException;
+import com.desafioItau.exceptions.TransacaoException;
 import com.desafioItau.repositorys.ClienteRepository;
 import com.desafioItau.repositorys.ContaRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -27,43 +30,51 @@ public class ContaService {
     private final ContaRepository contaRepository;
     private final ModelMapper modelMapper;
     private final ClienteRepository clienteRepository;
-    //private final ProducerContaService producerContaService;  //kafka
 
     private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost",6379);
+
+    Random random = new Random();
 
     @Transactional // evita dados quebrados
     public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
 
-        if (clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) == null || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj())== null){
-            throw new ClienteExistenteException("cliente nao EXISTE!!!!");
-        }
+        String nunConta = gerarNumConta();
+        int digitoVerificador = random.nextInt(10);
 
+        if (clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) == null || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj())== null){
+            throw new ClienteExistenteException("Cliente nao EXISTE!, coloque dumento.");
+        }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta());
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null ) {
-            throw new ClienteCpfException("cliente nao pussui CPF para abrir conta FISICA!");
+            throw new ClienteCpfException("Cliente nao pussui CPF para abrir conta FISICA!");
         }
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && contaDto.getClienteCnpj() == null) {
-            throw new ClienteCpfException("cliente nao pussui CNPJ para abrir conta JURIDICA!");
+            throw new ClienteCpfException("Cliente nao pussui CNPJ para abrir conta JURIDICA!");
         }
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && contaDto.getClienteCpf() == null && contaDto.getClienteCnpj() == null) {
             throw new ClienteCpfException("Informe documento valido para abrir conta GOVERNAMENTAL!");
         }
         ClienteEntidade cliente = null; // se a pessoa existe
         if (Objects.nonNull(conta)) {
-            throw new ClienteCpfException(String.format("conta de numero %s ja existe", contaDto.getNumeroDaConta()));
+            throw new ClienteCpfException(String.format("Conta de numero %s ja existe", contaDto.getNumeroDaConta()));
         }
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null) {
             cliente = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
+            contaDto.setNumeroDaConta(nunConta);
+            contaDto.setDigitoVerificador(digitoVerificador);
             contaDto.setSaqueSemTaxa(5);
         }
         else if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_JURIDICA && clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
             cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+            contaDto.setNumeroDaConta(nunConta);
+            contaDto.setDigitoVerificador(digitoVerificador);
             contaDto.setSaqueSemTaxa(50);
         }
         else if (contaDto.getTipoDaConta() == EnumTipoDaConta.GOVERNAMENTAL && clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) != null
                 || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj()) != null) {
-
             cliente = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
+            contaDto.setNumeroDaConta(nunConta);
+            contaDto.setDigitoVerificador(digitoVerificador);
             contaDto.setSaqueSemTaxa(250);
         }
 
@@ -75,12 +86,8 @@ public class ContaService {
         contaEntidade.setAgencia(contaDto.getAgencia());
 
         contaEntidade.setCliente(cliente);
-//        ClienteEntidade clienteEntidade = clienteRepository.findClienteByCpf(contaDto.getClienteCpf());
-//        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj());
-        //Optional<ContaEntidade> verificarConta = Optional.ofNullable(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta()));
 
         Jedis jedis = pool.getResource();
-
         jedis.set(contaEntidade.getNumeroDaConta(), Integer.toString(contaEntidade.getSaqueSemTaxa()));
 
         //producerContaService.send(contaEntidade);//Kafka
@@ -101,7 +108,7 @@ public class ContaService {
         if (Objects.nonNull(conta1)) {
             return conta1;
         } else {
-            throw new ClienteExistenteException("Documento Inexistente ou Invalido!");
+            throw new ContaNaoEncontradaException("Documento Inexistente ou Invalido!");
         }
     }
 
@@ -111,9 +118,8 @@ public class ContaService {
             BeanUtils.copyProperties(conta, clienteAtual);
             return contaRepository.save(clienteAtual);
         } else {
-            throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado!", numeroDaConta
-            ));
+            throw new ContaNaoEncontradaException(String.format(
+                    "Cliente de documento %s nao encontrado!", numeroDaConta));
         }
     }
 
@@ -128,30 +134,37 @@ public class ContaService {
                 contaRepository.delete(conta);
             }
             else {
-                throw new ClienteExistenteException(String.format(  // criar exception para transação voltar bad request
+                throw new TransacaoException(String.format(
                         "Para excluir a conta o saldo deve estar zerado, " + "você possui R$%s de saldo!",
                         conta.getSaldo()));
             }
 
         } else {
-            throw new ClienteExistenteException(String.format(
+            throw new TransacaoException(String.format(
                     "Cliente de documento %s nao encontrado ou não existe!", numeroDaConta
             ));
         }
     }
 
-    public List<ContaEntidade> buscarDocumento(String clienteCpf) { //Buscar Pelo Documento
+    public List<ContaEntidade> buscarDocumento(String clienteCpf) {
         List<ContaEntidade> contas = contaRepository.findContaByClienteCpf(clienteCpf);
         if (contas.size() > 0) {
             for (ContaEntidade conta : contas) {
                 conta.getClienteCpf();
             }
         } else {
-            throw new ClienteExistenteException(String.format(
-                    "conta de documento %s não encontrado", clienteCpf
-            ));
+            throw new TransacaoException(String.format(
+                    "Conta de documento %s não encontrado", clienteCpf));
         }
         return contas;
+    }
+
+    private String gerarNumConta() {
+        StringBuilder numConta = new StringBuilder(Integer.toString(random.nextInt(10)));
+        for (int i = 0; i < 4; i++) {
+            numConta.append(random.nextInt(10));
+        }
+        return String.valueOf(numConta);
     }
 }
 

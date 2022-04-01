@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository; //Utilizar metodos prontos do JPARepository
+    private final ClienteRepository clienteRepository;
     private final ModelMapper modelMapper;
 
     @Transactional// evita dados quebrados
@@ -27,17 +27,15 @@ public class ClienteService {
         ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(clienteDto.getCnpj());
         if (Objects.nonNull(clienteCpf) && Objects.nonNull(clienteCnpj)) {
             throw new ClienteExistenteException(
-                    "Documento informado já possui cadastro! Informe outro Documento!"
-            );
+                    "Documento informado já possui cadastro! Informe outro Documento!");
         }
-
         else {
             clienteRepository.save(clienteEntidade);
             }
         return clienteEntidade;
     }
 
-    public List<ClienteEntidade> findAll() { //listar
+    public List<ClienteEntidade> findAll() {
         return clienteRepository.findAll();
     }
 
@@ -59,27 +57,25 @@ public class ClienteService {
         }
     }
 
-    public ClienteEntidade atualizar(ClienteEntidade cliente, String cpf) {  // Setando atributo ID e registro automaticos
+    public ClienteEntidade atualizar(ClienteEntidade cliente, String cpf) {
         ClienteEntidade clienteAtual = clienteRepository.findClienteByCpf(cpf);
         if (Objects.nonNull(clienteAtual)) {
             BeanUtils.copyProperties(cliente, clienteAtual);
             return clienteRepository.save(clienteAtual);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado!", cpf
-            ));
+                    "Cliente de documento %s nao encontrado!", cpf));
         }
     }
 
-    public ClienteEntidade atualizarCnpj(ClienteEntidade cliente, String cnpj) {  // Setando atributo ID e registro automaticos
+    public ClienteEntidade atualizarCnpj(ClienteEntidade cliente, String cnpj) {
         ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(cnpj);
         if (Objects.nonNull(clienteCnpj)) {
             BeanUtils.copyProperties(cliente, clienteCnpj);
             return clienteRepository.save(clienteCnpj);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado!", clienteCnpj
-            ));
+                    "Cliente de documento %s nao encontrado!", clienteCnpj));
         }
     }
 
@@ -93,8 +89,7 @@ public class ClienteService {
             clienteRepository.delete(cliente);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado ou não existe!", cpf
-            ));
+                    "Cliente de documento %s nao encontrado ou não existe!", cpf));
         }
     }
 
@@ -104,8 +99,7 @@ public class ClienteService {
             clienteRepository.delete(cliente);
         } else {
             throw new ClienteExistenteException(String.format(
-                    "cliente de documento %s nao encontrado ou não existe!", cnpj
-            ));
+                    "Cliente de documento %s nao encontrado ou não existe!", cnpj));
         }
     }
 }

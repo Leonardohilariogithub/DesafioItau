@@ -4,10 +4,7 @@ import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.entidades.OperacaoEntidade;
 import com.desafioItau.enums.EnumOperacao;
 import com.desafioItau.enums.EnumTipoDaConta;
-import com.desafioItau.exceptions.ClienteCpfException;
-import com.desafioItau.exceptions.ContaNaoEncontradaException;
-import com.desafioItau.exceptions.OperacoesException;
-import com.desafioItau.exceptions.SaldoInsuficienteException;
+import com.desafioItau.exceptions.*;
 import com.desafioItau.repositorys.ContaRepository;
 import com.desafioItau.repositorys.OperacaoRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +28,14 @@ public class OperacaoService {
     private final OperacaoRepository operacaoRepository; //Utilizar metodos prontos do JPARepository
     private final ContaRepository contaRepository;
     private final ContaService contaService;
+
     private final ProducerOperacaoSaqueService producerSaqueService; //kafka
 
     private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost",6379);
 
     public OperacaoEntidade depositar(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
-            throw new ClienteCpfException(" o valor nao é valido!"); // exeception OPERAÇOES
+            throw new OperacoesNaoValidaException(" o valor nao é valido!"); // exeception OPERAÇOES
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta());
         if (Objects.nonNull(conta)) {
@@ -47,7 +45,7 @@ public class OperacaoService {
             conta.setSaldo(BigDecimal.valueOf(novoValorSaldo));
             operacaoEntidade.setSaldo(BigDecimal.valueOf(novoValorSaldo));
         } else {
-            throw new ClienteCpfException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaConta()));
+            throw new ContaNaoEncontradaException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaConta()));
         }
         contaRepository.save(conta);
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.DEPOSITO);
@@ -77,8 +75,7 @@ public class OperacaoService {
 
         if (valorSaque > valorSaldo){
             throw new SaldoInsuficienteException(String.format(
-                    "Saldo insuficiente! SALDO: R$ %s", valorSaldo
-            ));
+                    "Saldo insuficiente! SALDO: R$ %s", valorSaldo));
         }
         if (tipoDaConta == EnumTipoDaConta.PESSOA_FISICA || tipoDaConta == EnumTipoDaConta.PESSOA_JURIDICA) { //Taxa é igual
             if (quantidaDeSaque > 0) {
@@ -89,7 +86,6 @@ public class OperacaoService {
                 contaEntidade.setSaqueSemTaxa(Math.toIntExact(quantidaDeSaque));
 
                 alerta = String.format(QUANTIDADE_DE_SAQUES_GRATUITOS, contaEntidade.getSaqueSemTaxa()); //Quantidade
-
             } else {
                 if (valorSaque + taxa > valorSaldo) {
                     throw new SaldoInsuficienteException(String.format(
@@ -102,7 +98,6 @@ public class OperacaoService {
 
                 alerta = String.format(LIMITE_DE_SAQUES_ATIGIDO, operacaoEntidade.getTaxa());
             }
-
         } else if (tipoDaConta == EnumTipoDaConta.GOVERNAMENTAL) {
             taxa = EnumTipoDaConta.GOVERNAMENTAL.getTaxa();
             if (quantidaDeSaque > 0) {
@@ -127,6 +122,7 @@ public class OperacaoService {
                 alerta = String.format(LIMITE_DE_SAQUES_ATIGIDO, operacaoEntidade.getTaxa());
             }
         }
+
         producerSaqueService.send(operacaoEntidade);  //Kafka
 
         contaRepository.save(contaEntidade);
@@ -136,7 +132,6 @@ public class OperacaoService {
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.SAQUE);
         operacaoEntidade.setConta(contaEntidade);
 
-
         return operacaoRepository.save(operacaoEntidade);
     }
 
@@ -145,18 +140,18 @@ public class OperacaoService {
             throw new OperacoesException(" O valor nao é valido!");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta());
-        if (Objects.isNull(conta)) {// criar exception para contanao existe etorno not faid
-            throw new ClienteCpfException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaConta()));
+        if (Objects.isNull(conta)) {
+            throw new TransacaoNaoEncontradaException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaConta()));
         }
         ContaEntidade contaDestino = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaContaDestino());
-        if (Objects.isNull(contaDestino)) {// criar exception para contanao existe etorno not faid
-            throw new ClienteCpfException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaContaDestino()));
+        if (Objects.isNull(contaDestino)) {
+            throw new TransacaoNaoEncontradaException(String.format("Conta de numero %s nao encontrado!", operacaoEntidade.getNumeroDaContaDestino()));
         }
-        if (conta.getSaldo().doubleValue() - operacaoEntidade.getValorDaTransação().doubleValue() < 0) {// criar exception para contanao existe etorno bad request
-            throw new ClienteCpfException(String.format(" A conta não tem saldo para operação!!!", operacaoEntidade.getNumeroDaContaDestino()));
+        if (conta.getSaldo().doubleValue() - operacaoEntidade.getValorDaTransação().doubleValue() < 0) {
+            throw new TransacaoException(String.format(" A conta não tem saldo para operação!!!", operacaoEntidade.getNumeroDaContaDestino()));
         }
-        if (conta == contaDestino) { // criar exception para transação voltar bad request
-            throw new ClienteCpfException("transação nao autorizada, conta origem não pode ser igual a conta destino!");
+        if (conta == contaDestino) {
+            throw new TransacaoException("transação nao autorizada, conta origem não pode ser igual a conta destino!");
         }
 
         double saldoContaOrigem = conta.getSaldo().doubleValue();
@@ -177,13 +172,12 @@ public class OperacaoService {
         operacaoEntidade.setTipoDaOperacao(EnumOperacao.TRANSFERENCIA);
 
         return operacaoRepository.save(operacaoEntidade);
-
     }
 
     public BigDecimal saldo(String numeroDaConta) {
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(numeroDaConta);
         if (Objects.isNull(conta)) {
-            throw new ClienteCpfException(String.format("Conta de numero %s nao encontrado!", numeroDaConta));
+            throw new ContaNaoEncontradaException(String.format("Conta de numero %s nao encontrado!", numeroDaConta));
         }
         return conta.getSaldo();
     }
