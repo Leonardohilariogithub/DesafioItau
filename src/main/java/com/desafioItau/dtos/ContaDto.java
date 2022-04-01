@@ -26,7 +26,7 @@ public class ContaDto implements Serializable {
     @Enumerated(EnumType.STRING)
     private EnumTipoDaConta tipoDaConta;      // PESSOA_FISICA, PESSOA_JURIDICA, GOVERNAMENTAL
 
-    private String digitoVerificador;
+    private int digitoVerificador;
 
     private String clienteCpf;
 

@@ -43,14 +43,6 @@ public class TratamentoDefaultException {
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<DefaultException> handle(HttpMessageNotReadableException e) {
-        DefaultException defaultException = new DefaultException();
-        defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
-        defaultException.setMensagem(e.getMessage());
-        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
-
-    }
     @ExceptionHandler(ContaNaoEncontradaException.class)
     public ResponseEntity<DefaultException> handle(ContaNaoEncontradaException e) {
         DefaultException defaultException = new DefaultException();
@@ -66,10 +58,31 @@ public class TratamentoDefaultException {
         defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
+    @ExceptionHandler(OperacoesNaoValidaException.class)
+    public ResponseEntity<DefaultException> handle(OperacoesNaoValidaException e) {
+        DefaultException defaultException = new DefaultException();
+        defaultException.setStatus(HttpStatus.NOT_ACCEPTABLE.value()); // nao ser aceito
+        defaultException.setMensagem(e.getMessage());
+        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
+    }
     @ExceptionHandler(SaldoInsuficienteException.class)
     public ResponseEntity<DefaultException> handle(SaldoInsuficienteException e) {
         DefaultException defaultException = new DefaultException();
         defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
+        defaultException.setMensagem(e.getMessage());
+        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
+    }
+    @ExceptionHandler(TransacaoException.class)
+    public ResponseEntity<DefaultException> handle(TransacaoException e) {
+        DefaultException defaultException = new DefaultException();
+        defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
+        defaultException.setMensagem(e.getMessage());
+        return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
+    }
+    @ExceptionHandler(TransacaoNaoEncontradaException.class)
+    public ResponseEntity<DefaultException> handle(TransacaoNaoEncontradaException e) {
+        DefaultException defaultException = new DefaultException();
+        defaultException.setStatus(HttpStatus.NOT_FOUND.value()); // nao ser aceito
         defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }

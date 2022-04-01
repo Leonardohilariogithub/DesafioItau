@@ -39,7 +39,7 @@ public class ContaEntidade implements Serializable {
     private EnumTipoDaConta tipoDaConta;
 
     @Column(nullable = false)
-    private String digitoVerificador;
+    private int digitoVerificador;
 
     private String clienteCpf;
 
