@@ -42,7 +42,7 @@ public class ContaService {
         int digitoVerificador = random.nextInt(10);
 
         if (clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) == null || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj())== null){
-            throw new ClienteExistenteException("Cliente nao EXISTE!, coloque dumento.");
+            throw new ClienteExistenteException("Cliente nao EXISTE!, coloque documento.");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta());
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null ) {
