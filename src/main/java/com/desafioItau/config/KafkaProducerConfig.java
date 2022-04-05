@@ -1,4 +1,4 @@
-package com.desafioItau.Config;
+package com.desafioItau.config;
 
 import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.entidades.OperacaoEntidade;
