@@ -2,7 +2,6 @@ package com.desafioItau.controllers;
 
 import com.desafioItau.dtos.ContaDto;
 import com.desafioItau.entidades.ContaEntidade;
-import com.desafioItau.exceptions.ClienteCpfException;
 import com.desafioItau.services.ContaService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -40,9 +39,15 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
 
-    @GetMapping("/obterContaPeloDocumento/")
-    public ResponseEntity<?> obterDocumento (@RequestParam(name = "clienteCpf") String clienteCpf){
-        List<ContaEntidade> conta = contaService.buscarDocumento(clienteCpf);
+    @GetMapping("/obterContaPeloCpf/")
+    public ResponseEntity<?> obterCpf (@RequestParam(name = "clienteCpf") String clienteCpf){
+        List<ContaEntidade> conta = contaService.buscarCpf(clienteCpf);
+        return ResponseEntity.status(HttpStatus.OK).body(conta);
+    }
+
+    @GetMapping("/obterContaPeloCnpj/")
+    public ResponseEntity<?> buscarCnpj (@RequestParam(name = "clienteCnpj") String clienteCnpj){
+        List<ContaEntidade> conta = contaService.buscarCnpj(clienteCnpj);
         return ResponseEntity.status(HttpStatus.OK).body(conta);
     }
 

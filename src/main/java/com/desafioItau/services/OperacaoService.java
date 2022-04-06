@@ -35,7 +35,7 @@ public class OperacaoService {
 
     public OperacaoEntidade depositar(OperacaoEntidade operacaoEntidade) {
         if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
-            throw new OperacoesNaoValidaException(" o valor nao é valido!"); // exeception OPERAÇOES
+            throw new OperacoesNaoValidaException(" o valor nao é valido!");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta());
         if (Objects.nonNull(conta)) {
@@ -123,7 +123,11 @@ public class OperacaoService {
             }
         }
 
-        producerSaqueService.send(operacaoEntidade);  //Kafka
+        try {
+            producerSaqueService.send(operacaoEntidade);  //Kafka
+        } catch (Exception e){
+            throw new ServicoIndisponivelException("Serviço Indisponivel!");   //exception criada!
+        }
 
         contaRepository.save(contaEntidade);
         operacaoEntidade.setSaldo(contaEntidade.getSaldo());

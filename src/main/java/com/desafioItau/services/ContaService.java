@@ -33,16 +33,16 @@ public class ContaService {
 
     private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost",6379);
 
-    Random random = new Random();
+    Random random = new Random(); //numeros aleatorios
 
     @Transactional // evita dados quebrados
-    public ContaEntidade criarConta(ContaDto contaDto) { // se passou um documento
+    public ContaEntidade criarConta(ContaDto contaDto) {
 
-        String nunConta = gerarNumConta();
-        int digitoVerificador = random.nextInt(10);
+        String nunConta = gerarNumConta();//numeros aleatorios
+        int digitoVerificador = random.nextInt(10);//numeros aleatorios
 
         if (clienteRepository.findClienteByCpf(contaDto.getClienteCpf()) == null || clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj())== null){
-            throw new ClienteExistenteException("Cliente nao EXISTE!, coloque documento.");
+            throw new ClienteExistenteException("Cliente nao EXISTE!, Coloque tipo de documento Valido!");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta());
         if (contaDto.getTipoDaConta() == EnumTipoDaConta.PESSOA_FISICA && contaDto.getClienteCpf() == null ) {
@@ -146,20 +146,36 @@ public class ContaService {
         }
     }
 
-    public List<ContaEntidade> buscarDocumento(String clienteCpf) {
-        List<ContaEntidade> contas = contaRepository.findContaByClienteCpf(clienteCpf);
-        if (contas.size() > 0) {
-            for (ContaEntidade conta : contas) {
-                conta.getClienteCpf();
-            }
-        } else {
+    public List<ContaEntidade> buscarCpf(String clienteCpf) {
+        ClienteEntidade cliente = clienteRepository.findClienteByCpf(clienteCpf);
+        List<ContaEntidade> contas = contaRepository.findByClienteId(cliente.getId());
+//        if (contas.size() > 0) {
+//            for (ContaEntidade conta : contas) {             //outra forma de fazer
+//                conta.getClienteCpf();
+//            }
+//        }
+          if (contas.isEmpty()){
             throw new TransacaoException(String.format(
                     "Conta de documento %s não encontrado", clienteCpf));
         }
         return contas;
     }
 
-    private String gerarNumConta() {
+    public List<ContaEntidade> buscarCnpj(String clienteCnpj){
+        ClienteEntidade cliente = clienteRepository.findClienteByCnpj(clienteCnpj);
+        List<ContaEntidade> contas = contaRepository.findByClienteId(cliente.getId());
+        if(contas.size() > 0){
+            for(ContaEntidade conta : contas){
+                conta.getClienteCnpj();
+            }
+        }else {
+            throw new TransacaoException(String.format(
+                    "Conta de documento %s não encontrado", clienteCnpj));
+        }
+        return contas;
+    }
+
+    private String gerarNumConta() {//numeros aleatorios
         StringBuilder numConta = new StringBuilder(Integer.toString(random.nextInt(10)));
         for (int i = 0; i < 4; i++) {
             numConta.append(random.nextInt(10));

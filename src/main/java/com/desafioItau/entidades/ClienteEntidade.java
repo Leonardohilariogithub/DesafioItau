@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -18,13 +19,14 @@ import java.util.List;
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "tb_cliente")
+@Builder
 public class ClienteEntidade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)// Gerar automaticamente
     private Long id; // UUID - identificador Universal indicado para projeto Microservices
 
-    @Column(nullable = false,length = 35)
+    @Column(nullable = false,length = 35)              //@NotNull
     private String nome;
 
     private String cpf;
