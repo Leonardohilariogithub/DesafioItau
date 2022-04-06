@@ -9,6 +9,5 @@ import java.util.List;
 public interface ContaRepository extends JpaRepository<ContaEntidade, Long> {
     ContaEntidade findContaByNumeroDaConta(String numeroDaConta);
     ContaEntidade findClienteByNumeroDaConta(String numeroDaConta);
-    List<ContaEntidade> findContaByClienteCpf(String clienteCpf);
-    List<ContaEntidade> findContaByClienteCnpj(String clienteCnpj);
+    List<ContaEntidade> findByClienteId(Long clienteId);
 }

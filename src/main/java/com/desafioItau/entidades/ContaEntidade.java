@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class ContaEntidade implements Serializable {
     @Column(nullable = false)
     private String numeroDaConta;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private EnumTipoDaConta tipoDaConta;
 
@@ -62,5 +64,4 @@ public class ContaEntidade implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "conta")
     private List<OperacaoEntidade> operacoes = new ArrayList<>();
-
 }

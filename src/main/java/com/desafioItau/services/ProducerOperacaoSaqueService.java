@@ -13,6 +13,9 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Service
 public class ProducerOperacaoSaqueService {
@@ -28,14 +31,17 @@ public class ProducerOperacaoSaqueService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void send(OperacaoEntidade operacaoEntidade){
+    public void send(OperacaoEntidade operacaoEntidade) throws ExecutionException, InterruptedException, TimeoutException {
 
         List<Header> headers = List.of(new RecordHeader(KafkaHeaders.TOPIC,topic.getBytes(StandardCharsets.UTF_8)));
 
         var producerRecord = new ProducerRecord<String,OperacaoEntidade>("novoSaque",null,null,null,operacaoEntidade, headers);
-        kafkaTemplate.send(producerRecord).addCallback(
-                success -> logger.info("Messagem send" +  operacaoEntidade.toString()
-                        + operacaoEntidade),
-                failure -> logger.info("Message failure" + failure.getMessage()));
+
+//        kafkaTemplate.send(producerRecord).addCallback(                          //Mensagem no IntellijIdea
+//                success -> logger.info("Messagem send" +  operacaoEntidade.toString()
+//                        + operacaoEntidade),
+//                failure -> logger.info("Message failure" + failure.getMessage()));
+
+        kafkaTemplate.send(producerRecord).get(10, TimeUnit.SECONDS);     //Tempo de Retorno do Servidor
     }
 }

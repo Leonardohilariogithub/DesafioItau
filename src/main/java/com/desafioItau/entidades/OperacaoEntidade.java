@@ -51,5 +51,4 @@ public class OperacaoEntidade implements Serializable {
     @ManyToOne
     @JoinColumn(name = "conta_id")
     private ContaEntidade conta;
-
 }

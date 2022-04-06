@@ -2,7 +2,6 @@ package com.desafioItau.controllers;
 
 import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.entidades.ClienteEntidade;
-import com.desafioItau.exceptions.ClienteExistenteException;
 import com.desafioItau.services.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -10,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import javax.persistence.NonUniqueResultException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class ClienteController{
     @PostMapping(value = "/cadastro")
     public ResponseEntity<Object> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
         if (clienteDto.getCpf() == null && clienteDto.getCnpj() == null){
-            throw new ClienteExistenteException(" voce tem que informar documento para fazer cadastro"); //troca exeption bad request
+            throw new NonUniqueResultException(" voce tem que informar documento para fazer cadastro"); //troca exeption bad request
         }
         var clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
