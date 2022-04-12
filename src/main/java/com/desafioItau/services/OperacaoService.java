@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,7 +35,7 @@ public class OperacaoService {
     private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost",6379);
 
     public OperacaoEntidade depositar(OperacaoEntidade operacaoEntidade) {
-        if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
+        if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {         //não pode numero negativo
             throw new OperacoesNaoValidaException(" o valor nao é valido!");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta());
@@ -54,6 +55,9 @@ public class OperacaoService {
 
     @Transactional
     public OperacaoEntidade sacar(OperacaoEntidade operacaoEntidade) {
+        if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {         //não pode numero negativo
+            throw new OperacoesNaoValidaException(" o valor nao é valido!");
+        }
 
         Jedis jedis = pool.getResource();
 
@@ -140,7 +144,7 @@ public class OperacaoService {
     }
 
     public OperacaoEntidade transferencia(OperacaoEntidade operacaoEntidade) {
-        if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {
+        if (operacaoEntidade.getValorDaTransação().doubleValue() <= 0.0) {    //não pode numero negativo
             throw new OperacoesException(" O valor nao é valido!");
         }
         ContaEntidade conta = contaRepository.findContaByNumeroDaConta(operacaoEntidade.getNumeroDaConta());

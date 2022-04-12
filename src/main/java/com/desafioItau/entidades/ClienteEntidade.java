@@ -7,19 +7,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "tb_cliente")
 @Builder
+@Data
 public class ClienteEntidade implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -46,4 +47,10 @@ public class ClienteEntidade implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<ContaEntidade> contas = new ArrayList<>();
+
+    public ClienteEntidade(int i, String leonardo, String s, String s1, String s2) {
+     //teste Unitarios
+    }
+
+
 }

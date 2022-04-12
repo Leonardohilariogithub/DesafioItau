@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.persistence.NonUniqueResultException;
 import javax.validation.Valid;
 import java.util.List;
@@ -29,7 +30,7 @@ public class ClienteController{
         }
         var clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(clienteDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(clienteEntidade));
     }
 
     @GetMapping
