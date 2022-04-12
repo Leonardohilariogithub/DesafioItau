@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -21,10 +22,9 @@ public class ClienteService {
     private final ModelMapper modelMapper;
 
     @Transactional// evita dados quebrados
-    public ClienteEntidade criarCliente(ClienteDto clienteDto) {
-        ClienteEntidade clienteEntidade = modelMapper.map(clienteDto, ClienteEntidade.class);
-        ClienteEntidade clienteCpf = clienteRepository.findClienteByCpf(clienteDto.getCpf());
-        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(clienteDto.getCnpj());
+    public ClienteEntidade criarCliente(ClienteEntidade clienteEntidade) {
+        ClienteEntidade clienteCpf = clienteRepository.findClienteByCpf(clienteEntidade.getCpf());
+        ClienteEntidade clienteCnpj = clienteRepository.findClienteByCnpj(clienteEntidade.getCnpj());
         if (Objects.nonNull(clienteCpf) && Objects.nonNull(clienteCnpj)) {
             throw new ClienteExistenteException(
                     "Documento informado já possui cadastro! Informe outro Documento!");
@@ -102,6 +102,10 @@ public class ClienteService {
                     "Cliente de documento %s nao encontrado ou não existe!", cnpj));
         }
     }
+
+//    public Object save(ClienteEntidade any) {      //@Test
+//        return null;
+//    }
 }
 
 
