@@ -19,6 +19,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class ContaService {
     Random random = new Random(); //numeros aleatorios
 
     @Transactional // evita dados quebrados
-    public ContaEntidade criarConta(ContaDto contaDto) {
+    public ContaEntidade criarConta(@Valid ContaDto contaDto) {
 
         String nunConta = gerarNumConta();//numeros aleatorios
         int digitoVerificador = random.nextInt(10);//numeros aleatorios

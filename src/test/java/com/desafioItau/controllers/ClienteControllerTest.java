@@ -1,25 +1,19 @@
 package com.desafioItau.controllers;
 
-import com.desafioItau.dtos.ClienteDto;
-import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.services.ClienteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ClienteControllerTest {
 
     @InjectMocks
@@ -28,25 +22,18 @@ class ClienteControllerTest {
     @Mock
     private ClienteService clienteService;
 
-    @Mock
-    private ModelMapper modelMapper;
-
-    private ClienteEntidade clienteEntidade;
-    private ClienteDto clienteDto;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        startClienteEntidade();
+        mockMvc = MockMvcBuilders.standaloneSetup(clienteController)
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .setViewResolvers((s, locale) ->new MappingJackson2JsonView()).build();
+
     }
 
     @Test
     void salvarCliente() {
-        when(clienteService.criarCliente(any())).thenReturn(clienteEntidade);
-
-        ResponseEntity<?> resposta = clienteController.salvarCliente(clienteDto);
-
-        assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
 
 
     }
@@ -54,24 +41,13 @@ class ClienteControllerTest {
     @Test
     @DisplayName("")
     void listarCliente() {
-        when(clienteService.findAll()).thenReturn(List.of(clienteEntidade));
 
-        ResponseEntity<List<ClienteEntidade>> resposta = clienteController.listarCliente();
-
-        assertNotNull(resposta);
 
     }
 
     @Test
     @DisplayName("")
-    void obterCliente() {
-        when(clienteService.obter(anyString())).thenReturn(clienteEntidade);
-        when(modelMapper.map(any(), any())).thenReturn(clienteDto);
-
-        ResponseEntity<?> resposta = clienteController.obterCliente(clienteEntidade.getCpf());
-
-        assertNotNull(resposta);
-
+    void obterCliente(){
 
     }
 
@@ -93,10 +69,5 @@ class ClienteControllerTest {
 
     @Test
     void deletarClienteCnpj() {
-    }
-
-    private void startClienteEntidade(){
-        ClienteEntidade cliente = new ClienteEntidade(1,"leonardo",
-                "04537183373", "61.962.903/0001-48", "085981543671");
     }
 }

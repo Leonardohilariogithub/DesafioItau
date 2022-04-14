@@ -1,6 +1,7 @@
 package com.desafioItau.exceptions.handle;
 
 import com.desafioItau.exceptions.ClienteCpfException;
+import com.desafioItau.exceptions.ClienteExistenteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,13 +29,13 @@ class TratamentoDefaultExceptionTest {
     void handle() {
         ResponseEntity<DefaultException> resposta = tratamentoDefaultException
                 .handle(new ClienteCpfException(
-                        "Documento informado já possui cadastro! Informe outro Documento!")
+                        "Cliente nao EXISTE!, Coloque tipo de documento Valido!")
                 );
         assertNotNull(resposta);
         assertNotNull(resposta.getBody());
         assertEquals(HttpStatus.NOT_ACCEPTABLE, resposta.getStatusCode());
         assertEquals(ResponseEntity.class, resposta.getClass());
-        assertEquals("Documento informado já possui cadastro! Informe outro Documento!",
+        assertEquals("Cliente nao EXISTE!, Coloque tipo de documento Valido!",
                 resposta.getBody().getMensagem());
         assertEquals(406, resposta.getBody().getStatus());
 
@@ -42,6 +43,18 @@ class TratamentoDefaultExceptionTest {
 
     @Test
     void testHandle() {
+        ResponseEntity<DefaultException> resposta = tratamentoDefaultException
+                .handle(new ClienteExistenteException(
+                        "Documento informado já possui cadastro! Informe outro Documento!")
+                );
+        assertNotNull(resposta);
+        assertNotNull(resposta.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, resposta.getStatusCode());
+        assertEquals(ResponseEntity.class, resposta.getClass());
+        assertEquals("Documento informado já possui cadastro! Informe outro Documento!",
+                resposta.getBody().getMensagem());
+        assertEquals(400, resposta.getBody().getStatus());
+
     }
 
     @Test
