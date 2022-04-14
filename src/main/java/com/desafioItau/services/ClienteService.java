@@ -102,10 +102,6 @@ public class ClienteService {
                     "Cliente de documento %s nao encontrado ou não existe!", cnpj));
         }
     }
-
-//    public Object save(ClienteEntidade any) {      //@Test
-//        return null;
-//    }
 }
 
 

@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -47,10 +46,4 @@ public class ClienteEntidade implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<ContaEntidade> contas = new ArrayList<>();
-
-    public ClienteEntidade(int i, String leonardo, String s, String s1, String s2) {
-     //teste Unitarios
-    }
-
-
 }
