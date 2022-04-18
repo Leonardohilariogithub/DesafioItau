@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -29,7 +28,6 @@ import java.util.List;
 
 import static com.desafioItau.utils.JsonConvertionUtils.asJsonString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -59,23 +57,6 @@ class ClienteControllerTest {
                 .build();
     }
 
-//    @Test
-//    void controllerElegibilidadeTest() {
-//
-//        Mockito.when(env.efetivarElegibilidade(any(), any())).thenReturn(mockElegibilidadeData());
-//
-//        var result =
-//                sut.consultaElegibilidade(headers, mockElegibilidadeHeader().getIdConta()
-//                        , mockElegibilidadeHeader().getCnpjTomadorCredito()
-//                        , mockElegibilidadeHeader().getIdRepresentante());
-//
-//
-//        assertEquals(HttpStatus.OK, result.getStatusCode());
-//        assertEquals(sut.consultaElegibilidade(headers, mockElegibilidadeHeader().getIdConta()
-//                , mockElegibilidadeHeader().getCnpjTomadorCredito()
-//                , mockElegibilidadeHeader().getIdRepresentante()), result);
-//    }
-
     @Test
     @DisplayName("Deve salvar cliente com sucesso")
     void salvarCliente() {
@@ -103,6 +84,10 @@ class ClienteControllerTest {
         Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
         Assertions.assertNotNull(result.getBody());
         Assertions.assertEquals("leonardo", result.getBody().get(0).getNome()); //verificando o nome
+        Assertions.assertEquals("045.371.833-73", result.getBody().get(0).getCpf());
+        Assertions.assertEquals("14.640.118/0001-99", result.getBody().get(0).getCnpj());
+        Assertions.assertEquals("123456789", result.getBody().get(0).getTelefone());
+        Assertions.assertEquals("centro", result.getBody().get(0).getEndereco());
     }
 
     @Test
@@ -123,11 +108,12 @@ class ClienteControllerTest {
 
         Mockito.when(clienteService.obter(any())).thenThrow(ClienteExistenteException.class);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/obterCliente/?cpf=04537183373"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/obterCliente/?cpf=045.371.833-73"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
+    @DisplayName("Deve obter clientes com sucesso com CNPJ")
     void obterClienteCnpj() {
         Mockito.when(clienteService.obterCnpj(any())).thenReturn(mockClienteEntidade());
 
@@ -138,14 +124,25 @@ class ClienteControllerTest {
     }
 
     @Test
+    @DisplayName("Deve falhar Cliente ao criar com CNPJ")
+    void deveFalharAoObterClienteCnpj() throws Exception {
+
+        Mockito.when(clienteService.obterCnpj(any())).thenThrow(ClienteExistenteException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/obterClienteCnpj/?cnpj=14.640.118/0001-99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve atualizar Cliente ao criar com CPF")
     void atualizarCliente() throws Exception {
         ClienteDto clienteDto = mockClienteDto();
         ClienteEntidade cliente = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, cliente);
 
-        when(clienteService.atualizar(cliente, "04537183373")).thenReturn(cliente);
+        when(clienteService.atualizar(cliente, "045.371.833.73")).thenReturn(cliente);
 
-        mockMvc.perform(put("/clientes/atualizar/?cpf=04537183373").contentType("application/json").content(asJsonString(clienteDto)))
+        mockMvc.perform(put("/clientes/atualizar/?cpf=045.371.833.73").contentType("application/json").content(asJsonString(clienteDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome", is(cliente.getNome())))
                 .andExpect(jsonPath("$.cpf", is(cliente.getCpf())))
@@ -154,28 +151,49 @@ class ClienteControllerTest {
     }
 
     @Test
-    void atualizarClienteCnpj() {
+    @DisplayName("Deve atualizar Cliente ao criar com CNPJ")
+    void atualizarClienteCnpj() throws Exception {
+        ClienteDto clienteDto = mockClienteDto();
+        ClienteEntidade cliente = new ClienteEntidade();
+        BeanUtils.copyProperties(clienteDto, cliente);
+
+        when(clienteService.atualizarCnpj(cliente, "14.640.118/0001-99")).thenReturn(cliente);
+
+        mockMvc.perform(put("/clientes/atualizarCnpj/?cnpj=14.640.118/0001-99").contentType("application/json").content(asJsonString(clienteDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome", is(cliente.getNome())))
+                .andExpect(jsonPath("$.cnpj", is(cliente.getCnpj())))
+                .andExpect(jsonPath("$.telefone", is(cliente.getTelefone())))
+                .andExpect(jsonPath("$.endereco", is(cliente.getEndereco())));
     }
 
     @Test
+    @DisplayName("Deve deletar Cliente ao criar com CPF")
     void deletarCliente() throws Exception {
-        doNothing().when(clienteService).deletarCliente("04537183373");
+        doNothing().when(clienteService).deletarCliente("045.371.833-73");
 
-        mockMvc.perform(delete("/clientes/deletar/?cpf=04537183373"))
+        mockMvc.perform(delete("/clientes/deletar/?cpf=045.371.833-73"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void deletarClienteCnpj() {
+    @DisplayName("Deve atualizar Cliente ao criar com CNPJ")
+    void deletarClienteCnpj() throws Exception {
+        doNothing().when(clienteService).deletarClienteCnpj("14.640.118/0001-99");
+
+        mockMvc.perform(delete("/clientes/deletarCnpj/?cnpj=14.640.118/0001-99"))
+                .andExpect(status().isNoContent());
     }
 
     private ClienteEntidade mockClienteEntidade() {
         return ClienteEntidade.builder()
-                .id(1L).nome("leonardo").cpf("04537183373").telefone("123456789").endereco("centro").build();
+                .id(1L).nome("leonardo").cpf("045.371.833-73").cnpj("14.640.118/0001-99")
+                .telefone("123456789").endereco("centro").build();
     }
 
     private ClienteDto mockClienteDto() {
         return ClienteDto.builder()
-                .id(1L).nome("leonardo").cpf("04537183373").telefone("123456789").endereco("centro").build();
+                .id(1L).nome("leonardo").cpf("045.371.833-73").cnpj("14.640.118/0001-99")
+                .telefone("123456789").endereco("centro").build();
     }
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.desafioItau.enums.EnumTipoDaConta.PESSOA_FISICA;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -38,28 +39,31 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve salvar uma conta com cpf")
     void criarConta() {
-//        ContaDto contaDto = ContaDto.builder().id(1L).agencia("1515").numeroDaConta("12345").tipoDaConta(PESSOA_FISICA)
-//                .digitoVerificador(5).clienteCpf("045.371.833.-73").saldo(BigDecimal.valueOf(0))
-//                .saqueSemTaxa(5).aviso("conta criada com sucesso").build();
-//
-//        ContaEntidade contaEntidade = new ContaEntidade();
-//        BeanUtils.copyProperties(contaDto, contaEntidade);
-//
-//        when(contaRepository.save(contaEntidade)).thenReturn(contaEntidade);
-//
-//        ContaEntidade contaSalva = contaService.criarConta(contaEntidade);
-//
-//        assertThat(contaSalva.getId()).isNotNull();
-//        assertThat(contaSalva.getAgencia()).isEqualTo("1515");
-//        assertThat(contaSalva.getNumeroDaConta()).isEqualTo("12345");
-//        assertThat(contaSalva.getTipoDaConta()).isEqualTo(PESSOA_FISICA);
-//        assertThat(contaSalva.getDigitoVerificador()).isEqualTo(5);
-//        assertThat(contaSalva.getClienteCpf()).isEqualTo("045.371.833.-73");
-//        assertThat(contaSalva.getSaldo()).isEqualTo(0);
-//        assertThat(contaSalva.getSaqueSemTaxa()).isEqualTo(5);
-//        assertThat(contaSalva.getAviso()).isEqualTo("conta criada com sucesso");
-//        verify(contaRepository, times(1)).findContaByNumeroDaConta(contaEntidade.getNumeroDaConta());
-//        verify(contaRepository, times(1)).save(contaEntidade);
+        //cenario
+        ContaDto contaDto = ContaDto.builder().id(1L).agencia("1515").numeroDaConta("12345").tipoDaConta(PESSOA_FISICA)
+                .digitoVerificador(5).clienteCpf("045.371.833.-73").saldo(BigDecimal.valueOf(0))
+                .saqueSemTaxa(5).aviso("conta criada com sucesso").build();
+
+        ContaEntidade contaEntidade = new ContaEntidade();
+        BeanUtils.copyProperties(contaDto, contaEntidade);
+
+        //execucao
+        when(contaRepository.save(contaEntidade)).thenReturn(contaEntidade);
+
+        ContaEntidade contaSalva = contaService.criarConta(contaDto);
+
+        //verificacao
+        assertThat(contaSalva.getId()).isNotNull();
+        assertThat(contaSalva.getAgencia()).isEqualTo("1515");
+        assertThat(contaSalva.getNumeroDaConta()).isEqualTo("12345");
+        assertThat(contaSalva.getTipoDaConta()).isEqualTo(PESSOA_FISICA);
+        assertThat(contaSalva.getDigitoVerificador()).isEqualTo(5);
+        assertThat(contaSalva.getClienteCpf()).isEqualTo("045.371.833.-73");
+        assertThat(contaSalva.getSaldo()).isEqualTo(0);
+        assertThat(contaSalva.getSaqueSemTaxa()).isEqualTo(5);
+        assertThat(contaSalva.getAviso()).isEqualTo("conta criada com sucesso");
+        verify(contaRepository, times(1)).findContaByNumeroDaConta(contaEntidade.getNumeroDaConta());
+        verify(contaRepository, times(1)).save(contaEntidade);
     }
 
     @Test
