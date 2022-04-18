@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.BeanUtils;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -36,12 +37,14 @@ class ClienteServiceTest {
     @Test
     @DisplayName("Deve criar um cliente com CPF")
     void criarCliente() {
+        //cenario
         ClienteDto clienteDto = ClienteDto.builder().id(1L).nome("leonardo").cpf("045.371.833.-73")
                 .telefone("123456789").endereco("centro").build();
 
         ClienteEntidade clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
 
+        //execucao
         when(clienteRepository.save(clienteEntidade)).thenReturn(clienteEntidade);
 
         ClienteEntidade clienteSalvo = clienteService.criarCliente(clienteEntidade);
@@ -57,7 +60,8 @@ class ClienteServiceTest {
     }
 
     @Test
-    @DisplayName("Deve falhar ao criar um cliente com CPF") //Ao falhar tem que colocar Exception
+    @DisplayName("Deve falhar ao criar um cliente com CPF")
+        //Ao falhar tem que colocar Exception
     void deveFalharAoCriarClienteComCpf() {
         //cenario
         ClienteDto clienteDto = ClienteDto.builder().id(1L).nome("leonardo").cpf("045.371.833-73")
@@ -99,7 +103,8 @@ class ClienteServiceTest {
     }
 
     @Test
-    @DisplayName("Deve falhar ao criar um cliente com CNPJ")//Ao falhar tem que colocar Exception
+    @DisplayName("Deve falhar ao criar um cliente com CNPJ")
+//Ao falhar tem que colocar Exception
     void deveFalharAoCriarClienteComCnpj() {
         //cenario
         ClienteDto clienteDto = ClienteDto.builder().id(1L).nome("leonardo").cnpj("69.672.843/0001-30")
@@ -113,7 +118,7 @@ class ClienteServiceTest {
 
         //verificacao
         assertThrows(ClienteExistenteException.class, () -> clienteService.criarCliente(clienteEntidade));
-   }
+    }
 
     @Test
     @DisplayName("Deve listar os clientes com CPF")
@@ -143,7 +148,7 @@ class ClienteServiceTest {
 
         when(clienteRepository.findClienteByCpf(clienteDto.getCpf())).thenReturn(clienteEntidade);
 
-        assertEquals(clienteService.obter(clienteDto.getCpf()),clienteEntidade);
+        assertEquals(clienteService.obter(clienteDto.getCpf()), clienteEntidade);
     }
 
     @Test
@@ -172,7 +177,7 @@ class ClienteServiceTest {
 
         when(clienteRepository.findClienteByCnpj(clienteDto.getCnpj())).thenReturn(clienteEntidade);
 
-        assertEquals(clienteService.obterCnpj(clienteDto.getCnpj()),clienteEntidade);
+        assertEquals(clienteService.obterCnpj(clienteDto.getCnpj()), clienteEntidade);
     }
 
     @Test
@@ -199,7 +204,7 @@ class ClienteServiceTest {
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
 
         when(clienteRepository.findClienteByCpf(clienteDto.getCpf())).thenReturn(clienteEntidade);
-        when(clienteService.atualizar(clienteEntidade,clienteEntidade.getCpf())).thenReturn(clienteEntidade);
+        when(clienteService.atualizar(clienteEntidade, clienteEntidade.getCpf())).thenReturn(clienteEntidade);
         when(clienteRepository.save(clienteEntidade)).thenReturn(clienteEntidade);
 
         assertEquals(clienteDto.getCpf(), clienteEntidade.getCpf());
@@ -217,7 +222,7 @@ class ClienteServiceTest {
         when(clienteRepository.findClienteByCpf(clienteDto.getCpf())).thenReturn(null);
 
         assertThrows(ClienteExistenteException.class,
-                () -> clienteService.atualizar(clienteEntidade,clienteEntidade.getCpf()));
+                () -> clienteService.atualizar(clienteEntidade, clienteEntidade.getCpf()));
     }
 
     @Test
@@ -230,7 +235,7 @@ class ClienteServiceTest {
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
 
         when(clienteRepository.findClienteByCnpj(clienteDto.getCnpj())).thenReturn(clienteEntidade);
-        when(clienteService.atualizarCnpj(clienteEntidade,clienteEntidade.getCnpj())).thenReturn(clienteEntidade);
+        when(clienteService.atualizarCnpj(clienteEntidade, clienteEntidade.getCnpj())).thenReturn(clienteEntidade);
         when(clienteRepository.save(clienteEntidade)).thenReturn(clienteEntidade);
 
         assertEquals(clienteDto.getCnpj(), clienteEntidade.getCnpj());
@@ -248,7 +253,7 @@ class ClienteServiceTest {
         when(clienteRepository.findClienteByCnpj(clienteDto.getCnpj())).thenReturn(null);
 
         assertThrows(ClienteExistenteException.class,
-                () -> clienteService.atualizarCnpj(clienteEntidade,clienteEntidade.getCnpj()));
+                () -> clienteService.atualizarCnpj(clienteEntidade, clienteEntidade.getCnpj()));
     }
 
 
@@ -263,7 +268,7 @@ class ClienteServiceTest {
 
         when(clienteRepository.findById(clienteDto.getId())).thenReturn(Optional.of(clienteEntidade));
 
-        assertEquals(clienteService.findById(Long.valueOf(String.valueOf(clienteDto.getId()))),Optional.of(clienteEntidade));
+        assertEquals(clienteService.findById(Long.valueOf(String.valueOf(clienteDto.getId()))), Optional.of(clienteEntidade));
     }
 
     @Test
@@ -279,7 +284,7 @@ class ClienteServiceTest {
         doNothing().when(clienteRepository).delete(clienteEntidade);
         clienteService.deletarCliente(clienteEntidade.getCpf());
 
-        verify(clienteRepository,times(1)).delete(clienteEntidade);
+        verify(clienteRepository, times(1)).delete(clienteEntidade);
     }
 
     @Test
@@ -295,7 +300,7 @@ class ClienteServiceTest {
         doNothing().when(clienteRepository).delete(clienteEntidade);
         clienteService.deletarClienteCnpj(clienteEntidade.getCnpj());
 
-        verify(clienteRepository,times(1)).delete(clienteEntidade);
+        verify(clienteRepository, times(1)).delete(clienteEntidade);
     }
 
     @Test

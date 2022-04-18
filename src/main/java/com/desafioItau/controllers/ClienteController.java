@@ -23,13 +23,14 @@ public class ClienteController{
     private final ModelMapper modelMapper;
 
     @PostMapping(value = "/cadastro")
-    public ResponseEntity<Object> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
+    public ResponseEntity<?> salvarCliente(@RequestBody @Valid ClienteDto clienteDto){
         if (clienteDto.getCpf() == null && clienteDto.getCnpj() == null){
             throw new NonUniqueResultException(" voce tem que informar documento para fazer cadastro"); //troca exeption bad request
         }
         var clienteEntidade = new ClienteEntidade();
         BeanUtils.copyProperties(clienteDto, clienteEntidade);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(clienteEntidade));
+        var cliente = clienteService.criarCliente(clienteEntidade);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
     @GetMapping

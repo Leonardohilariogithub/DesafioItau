@@ -6,9 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class DesafioItauApplicationTests {
 
-	@Test
-	void main() {
-		DesafioItauApplication.main(new String[] {});
-	}
+    @Test
+    void main() {
+        DesafioItauApplication.main(new String[]{});
+    }
 
 }

@@ -1,8 +1,6 @@
 package com.desafioItau.services;
 
-import com.desafioItau.dtos.ClienteDto;
 import com.desafioItau.dtos.ContaDto;
-import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.repositorys.ContaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.desafioItau.enums.EnumTipoDaConta.PESSOA_FISICA;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -99,7 +96,7 @@ class ContaServiceTest {
 
         when(contaRepository.findContaByNumeroDaConta(contaDto.getNumeroDaConta())).thenReturn(contaEntidade);
 
-        assertEquals(contaService.obter(contaDto.getNumeroDaConta()),contaEntidade);
+        assertEquals(contaService.obter(contaDto.getNumeroDaConta()), contaEntidade);
     }
 
     @Test
