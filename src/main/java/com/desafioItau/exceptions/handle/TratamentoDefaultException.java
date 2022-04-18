@@ -26,7 +26,7 @@ public class TratamentoDefaultException {
     @ExceptionHandler(ClienteExistenteException.class)
     public ResponseEntity<DefaultException> handle(ClienteExistenteException e) {
         DefaultException defaultException = new DefaultException();
-        defaultException.setStatus(HttpStatus.BAD_REQUEST.value()); // nao ser aceito
+        defaultException.setStatus(HttpStatus.NOT_FOUND.value()); // nao ser aceito
         defaultException.setMensagem(e.getMessage());
         return ResponseEntity.status(defaultException.getStatus()).body(defaultException);
     }
