@@ -103,8 +103,7 @@ class ClienteServiceTest {
     }
 
     @Test
-    @DisplayName("Deve falhar ao criar um cliente com CNPJ")
-//Ao falhar tem que colocar Exception
+    @DisplayName("Deve falhar ao criar um cliente com CNPJ") //Ao falhar tem que colocar Exception
     void deveFalharAoCriarClienteComCnpj() {
         //cenario
         ClienteDto clienteDto = ClienteDto.builder().id(1L).nome("leonardo").cnpj("69.672.843/0001-30")
@@ -121,7 +120,7 @@ class ClienteServiceTest {
     }
 
     @Test
-    @DisplayName("Deve listar os clientes com CPF")
+    @DisplayName("Deve listar os clientes")
     void DeveListarOsClientes() {
         when(clienteRepository.findAll()).thenReturn(List.of(clienteEntidade));
 
@@ -255,7 +254,6 @@ class ClienteServiceTest {
         assertThrows(ClienteExistenteException.class,
                 () -> clienteService.atualizarCnpj(clienteEntidade, clienteEntidade.getCnpj()));
     }
-
 
     @Test
     @DisplayName("Deve obter os clientes pelo ID")

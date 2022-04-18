@@ -26,7 +26,8 @@ public class ContaController {
     public ResponseEntity<Object> criarConta(@RequestBody @Valid ContaDto contaDto){
         var contaEntidade = new ContaEntidade();
         BeanUtils.copyProperties(contaDto, contaEntidade);
-        return ResponseEntity.status(HttpStatus.CREATED).body(contaService.criarConta(contaDto));
+        ContaEntidade conta = contaService.criarConta(contaDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(conta);
     }
 
     @GetMapping
@@ -58,14 +59,6 @@ public class ContaController {
         BeanUtils.copyProperties(contaDto, conta);
         contaService.atualizar(conta, numeroDaConta);     //PUT usando PARANS- KEY  -VALUE
         return ResponseEntity.status(HttpStatus.OK).body(conta);
-    }
-
-    @PutMapping("/atualizarContaPeloDocumento/")
-    public ResponseEntity<ContaEntidade> atualizarDocumento(@RequestBody @Valid ContaDto contaDto, @RequestParam(name = "clienteCpf") String clienteCpf){
-        ContaEntidade documento = new ContaEntidade();
-        BeanUtils.copyProperties(contaDto, documento);
-        contaService.atualizar(documento, clienteCpf);     //PUT usando PARANS- KEY  -VALUE
-        return ResponseEntity.status(HttpStatus.OK).body(documento);
     }
 
     @DeleteMapping("/deletar/")
