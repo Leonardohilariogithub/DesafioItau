@@ -1,7 +1,10 @@
 package com.desafioItau.services;
 
 import com.desafioItau.dtos.OperacaoDto;
+import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.entidades.OperacaoEntidade;
+import com.desafioItau.enums.EnumTipoDaConta;
+import com.desafioItau.repositorys.ContaRepository;
 import com.desafioItau.repositorys.OperacaoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,20 +32,18 @@ class OperacaoServiceTest {
     private OperacaoRepository operacaoRepository;
 
     @Mock
-    OperacaoEntidade operacaoEntidade;
+    private ContaRepository contaRepository;
 
     @Test
     void depositar() {
        //cenario
-        OperacaoDto operacaoDto = OperacaoDto.builder().id(1L).numeroDaConta("1415").numeroDaContaDestino("12345")
-                .tipoDaOperacao(DEPOSITO).valorDaTransação(BigDecimal.valueOf(1)).taxa(BigDecimal.valueOf(10))
-                .saldo(BigDecimal.valueOf(0)).mensagem("sucesso").aviso("ok").build();
-
         OperacaoEntidade operacaoEntidade = new OperacaoEntidade();
-        BeanUtils.copyProperties(operacaoDto, operacaoEntidade);
+        BeanUtils.copyProperties(operacaoDtoMock(), operacaoEntidade);
 
         //execucao
         when(operacaoRepository.save(operacaoEntidade)).thenReturn(operacaoEntidade);
+
+        when(contaRepository.findContaByNumeroDaConta(any())).thenReturn(ContaEntidadeMock());
 
         OperacaoEntidade operacaoSalva = operacaoService.depositar(operacaoEntidade);
 
@@ -51,12 +52,11 @@ class OperacaoServiceTest {
         assertThat(operacaoSalva.getNumeroDaConta()).isEqualTo("1415");
         assertThat(operacaoSalva.getNumeroDaContaDestino()).isEqualTo("12345");
         assertThat(operacaoSalva.getTipoDaOperacao()).isEqualTo(DEPOSITO);
-        assertThat(operacaoSalva.getValorDaTransação()).isEqualTo(1);
-        assertThat(operacaoSalva.getTaxa()).isEqualTo(10);
-        assertThat(operacaoSalva.getSaldo()).isEqualTo(0);
+        assertThat(operacaoSalva.getValorDaTransação()).isEqualTo(new BigDecimal(1));
+        assertThat(operacaoSalva.getTaxa()).isEqualTo(new BigDecimal(10));
+        assertThat(operacaoSalva.getSaldo()).isEqualTo(new BigDecimal("11.0"));
         assertThat(operacaoSalva.getMensagem()).isEqualTo("sucesso");
         assertThat(operacaoSalva.getAviso()).isEqualTo("ok");
-        verify(operacaoRepository, times(1));
     }
 
     @Test
@@ -98,5 +98,18 @@ class OperacaoServiceTest {
 
     @Test
     void extrato() {
+    }
+
+    private OperacaoDto operacaoDtoMock() {
+        return OperacaoDto.builder().id(1L).numeroDaConta("1415").numeroDaContaDestino("12345")
+                .tipoDaOperacao(DEPOSITO).valorDaTransação(BigDecimal.valueOf(1)).taxa(BigDecimal.valueOf(10))
+                .saldo(new BigDecimal(1000)).mensagem("sucesso").aviso("ok").build();
+    }
+
+    private ContaEntidade ContaEntidadeMock() {
+        return ContaEntidade.builder().id(1L).agencia("1515").numeroDaConta("1415").tipoDaConta(EnumTipoDaConta.PESSOA_FISICA)
+                .digitoVerificador(7).clienteCpf("045.371.833-73").clienteCnpj("90.383.151/0001-69").saldo(new BigDecimal(10))
+                .saqueSemTaxa(10).aviso("ok").build();
+
     }
 }
