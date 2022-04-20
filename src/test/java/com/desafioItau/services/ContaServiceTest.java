@@ -1,8 +1,11 @@
 package com.desafioItau.services;
 
 import com.desafioItau.dtos.ContaDto;
+import com.desafioItau.entidades.ClienteEntidade;
 import com.desafioItau.entidades.ContaEntidade;
+import com.desafioItau.repositorys.ClienteRepository;
 import com.desafioItau.repositorys.ContaRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,11 +17,15 @@ import org.mockito.quality.Strictness;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.desafioItau.enums.EnumTipoDaConta.PESSOA_FISICA;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.desafioItau.enums.EnumTipoDaConta.PESSOA_JURIDICA;
+import static java.util.Optional.empty;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -36,34 +43,26 @@ class ContaServiceTest {
     @Mock
     private ContaEntidade contaEntidade;
 
+    @Mock
+    private ClienteRepository clienteRepository;
+
     @Test
     @DisplayName("Deve salvar uma conta com cpf")
     void criarConta() {
         //cenario
-        ContaDto contaDto = ContaDto.builder().id(1L).agencia("1515").numeroDaConta("12345").tipoDaConta(PESSOA_FISICA)
-                .digitoVerificador(5).clienteCpf("045.371.833.-73").saldo(BigDecimal.valueOf(0))
-                .saqueSemTaxa(5).aviso("conta criada com sucesso").build();
+        ContaDto contaDto = ContaDto.builder().id(1L).agencia("1515").tipoDaConta(PESSOA_FISICA).clienteCpf("04537183373").build();
 
-        ContaEntidade contaEntidade = new ContaEntidade();
-        BeanUtils.copyProperties(contaDto, contaEntidade);
+        ClienteEntidade cliente = ClienteEntidade.builder().id(1L).nome("leo").cpf("04537183373").cnpj(null).telefone("centro").endereco("centro").build();
 
-        //execucao
-        when(contaRepository.save(contaEntidade)).thenReturn(contaEntidade);
+        when(clienteRepository.findClienteByCpf("04537183373")).thenReturn(cliente);
+        when(clienteRepository.findClienteByCnpj(null)).thenReturn(cliente);
+        when(clienteRepository.save(cliente)).thenReturn(cliente);
 
         ContaEntidade contaSalva = contaService.criarConta(contaDto);
 
-        //verificacao
-        assertThat(contaSalva.getId()).isNotNull();
-        assertThat(contaSalva.getAgencia()).isEqualTo("1515");
-        assertThat(contaSalva.getNumeroDaConta()).isEqualTo("12345");
-        assertThat(contaSalva.getTipoDaConta()).isEqualTo(PESSOA_FISICA);
-        assertThat(contaSalva.getDigitoVerificador()).isEqualTo(5);
-        assertThat(contaSalva.getClienteCpf()).isEqualTo("045.371.833.-73");
-        assertThat(contaSalva.getSaldo()).isEqualTo(0);
-        assertThat(contaSalva.getSaqueSemTaxa()).isEqualTo(5);
-        assertThat(contaSalva.getAviso()).isEqualTo("conta criada com sucesso");
-        verify(contaRepository, times(1)).findContaByNumeroDaConta(contaEntidade.getNumeroDaConta());
-        verify(contaRepository, times(1)).save(contaEntidade);
+        assertEquals(contaSalva.getAgencia(), "1515");
+        assertEquals(contaSalva.getTipoDaConta(), PESSOA_FISICA);
+        assertEquals(contaSalva.getSaqueSemTaxa(),5);
     }
 
     @Test
@@ -158,12 +157,34 @@ class ContaServiceTest {
         ContaEntidade contaEntidade = new ContaEntidade();
         BeanUtils.copyProperties(contaDto, contaEntidade);
 
-        when(contaRepository.findClienteByNumeroDaConta(contaDto.getClienteCpf())).thenReturn(contaEntidade);
+        ClienteEntidade cliente = ClienteEntidade.builder().id(1L).nome("leo").cpf("045.371.833.-73")
+                .cnpj(null).endereco("centro").telefone("centro").build();
 
-        assertEquals(contaService.buscarCpf(contaDto.getClienteCpf()), contaEntidade);
-    }
+        when(contaRepository.findByClienteId(contaDto.getId())).thenReturn(Collections.singletonList(contaEntidade));
+        when(clienteRepository.findClienteByCpf(contaDto.getClienteCpf())).thenReturn(cliente);
+        List<ContaEntidade> contaLista = contaService.buscarCpf(contaEntidade.getClienteCpf());
+
+        assertThat(contaLista, Matchers.is(Matchers.not(empty())));
+        assertThat(contaLista.get(0), Matchers.is(equalTo(contaEntidade)));
+      }
 
     @Test
     void buscarCnpj() {
+        ContaDto contaDto = ContaDto.builder().id(1L).agencia("1515").numeroDaConta("12345").tipoDaConta(PESSOA_JURIDICA)
+                .digitoVerificador(5).clienteCnpj("48.594.743/0001-63").saldo(BigDecimal.valueOf(0))
+                .saqueSemTaxa(5).aviso("conta criada com sucesso").build();
+
+        ContaEntidade contaEntidade = new ContaEntidade();
+        BeanUtils.copyProperties(contaDto, contaEntidade);
+
+        ClienteEntidade cliente = ClienteEntidade.builder().id(1L).nome("leo").cnpj("48.594.743/0001-63")
+                .cnpj(null).endereco("centro").telefone("centro").build();
+
+        when(contaRepository.findByClienteId(contaDto.getId())).thenReturn(Collections.singletonList(contaEntidade));
+        when(clienteRepository.findClienteByCnpj(contaDto.getClienteCnpj())).thenReturn(cliente);
+        List<ContaEntidade> contaLista = contaService.buscarCnpj(contaEntidade.getClienteCnpj());
+
+        assertThat(contaLista, Matchers.is(Matchers.not(empty())));
+        assertThat(contaLista.get(0), Matchers.is(equalTo(contaEntidade)));
     }
 }

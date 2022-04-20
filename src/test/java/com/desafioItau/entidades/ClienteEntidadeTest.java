@@ -16,84 +16,84 @@ class ClienteEntidadeTest {
         Assertions.assertThat(clienteEntidade.getTelefone()).isEqualTo("12345678");
         Assertions.assertThat(clienteEntidade.getEndereco()).isEqualTo("rua pedro");
     }
-
-    @Test
-    void getNome() {
-    }
-
-    @Test
-    void getCpf() {
-    }
-
-    @Test
-    void getCnpj() {
-    }
-
-    @Test
-    void getTelefone() {
-    }
-
-    @Test
-    void getEndereco() {
-    }
-
-    @Test
-    void getDataHora() {
-    }
-
-    @Test
-    void getContas() {
-    }
-
-    @Test
-    void setId() {
-    }
-
-    @Test
-    void setNome() {
-    }
-
-    @Test
-    void setCpf() {
-    }
-
-    @Test
-    void setCnpj() {
-    }
-
-    @Test
-    void setTelefone() {
-    }
-
-    @Test
-    void setEndereco() {
-    }
-
-    @Test
-    void setDataHora() {
-    }
-
-    @Test
-    void setContas() {
-    }
-
-    @Test
-    void testEquals() {
-    }
-
-    @Test
-    void canEqual() {
-    }
-
-    @Test
-    void testHashCode() {
-    }
-
-    @Test
-    void testToString() {
-    }
-
-    @Test
-    void builder() {
-    }
+//
+//    @Test
+//    void getNome() {
+//    }
+//
+//    @Test
+//    void getCpf() {
+//    }
+//
+//    @Test
+//    void getCnpj() {
+//    }
+//
+//    @Test
+//    void getTelefone() {
+//    }
+//
+//    @Test
+//    void getEndereco() {
+//    }
+//
+//    @Test
+//    void getDataHora() {
+//    }
+//
+//    @Test
+//    void getContas() {
+//    }
+//
+//    @Test
+//    void setId() {
+//    }
+//
+//    @Test
+//    void setNome() {
+//    }
+//
+//    @Test
+//    void setCpf() {
+//    }
+//
+//    @Test
+//    void setCnpj() {
+//    }
+//
+//    @Test
+//    void setTelefone() {
+//    }
+//
+//    @Test
+//    void setEndereco() {
+//    }
+//
+//    @Test
+//    void setDataHora() {
+//    }
+//
+//    @Test
+//    void setContas() {
+//    }
+//
+//    @Test
+//    void testEquals() {
+//    }
+//
+//    @Test
+//    void canEqual() {
+//    }
+//
+//    @Test
+//    void testHashCode() {
+//    }
+//
+//    @Test
+//    void testToString() {
+//    }
+//
+//    @Test
+//    void builder() {
+//    }
 }
