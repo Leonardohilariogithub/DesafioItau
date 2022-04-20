@@ -102,22 +102,22 @@ class ClienteServiceTest {
         verify(clienteRepository, times(1)).save(clienteEntidade);
     }
 
-    @Test
-    @DisplayName("Deve falhar ao criar um cliente com CNPJ") //Ao falhar tem que colocar Exception
-    void deveFalharAoCriarClienteComCnpj() {
-        //cenario
-        ClienteDto clienteDto = ClienteDto.builder().id(1L).nome("leonardo").cnpj("69.672.843/0001-30")
-                .telefone("123456789").endereco("centro").build();
-
-        ClienteEntidade clienteEntidade = new ClienteEntidade();
-        BeanUtils.copyProperties(clienteDto, clienteEntidade);
-
-        //execucao
-        when(clienteRepository.findClienteByCnpj(clienteEntidade.getCnpj())).thenReturn(clienteEntidade);
-
-        //verificacao
-        assertThrows(ClienteExistenteException.class, () -> clienteService.criarCliente(clienteEntidade));
-    }
+//    @Test
+//    @DisplayName("Deve falhar ao criar um cliente com CNPJ") //Ao falhar tem que colocar Exception
+//    void deveFalharAoCriarClienteComCnpj() {
+//        //cenario
+//        ClienteDto clienteDto = ClienteDto.builder().id(1L).nome("leonardo").cnpj("69.672.843/0001-30")
+//                .telefone("123456789").endereco("centro").build();
+//
+//        ClienteEntidade clienteEntidade = new ClienteEntidade();
+//        BeanUtils.copyProperties(clienteDto, clienteEntidade);
+//
+//        //execucao
+//        when(clienteRepository.findClienteByCnpj(clienteEntidade.getCnpj())).thenReturn(clienteEntidade);
+//
+//        //verificacao
+//        assertThrows(ClienteExistenteException.class, () -> clienteService.criarCliente(clienteEntidade));
+//    }
 
     @Test
     @DisplayName("Deve listar os clientes")

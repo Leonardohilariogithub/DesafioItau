@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
 import static com.desafioItau.enums.EnumOperacao.DEPOSITO;
 import static org.mockito.ArgumentMatchers.any;
@@ -87,16 +89,30 @@ class OperacaoControllerTest {
 
     @Test
     void saldo() {
-//        when(operacaoService.saldo(any())).thenReturn(mockOperacaoEntidade());
-//
-//        var result = operacaoController.saldo("55555");
-//
-//        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
-//        Assertions.assertNotNull(result.getBody());
+        when(operacaoService.saldo(any())).thenReturn(mockOperacaoEntidadeSaldo());
+
+        var result = operacaoController.saldo("12345");
+
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+        Assertions.assertNotNull(result.getBody());
     }
 
     @Test
     void extrato() {
+        //cenario
+        when(operacaoService.extrato(any())).thenReturn(Collections.singletonList(mockOperacaoEntidade()));
+
+        //ação ou execução
+        var result = operacaoController.extrato(String.valueOf(mockOperacaoEntidade()));
+
+        //verificação
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+        Assertions.assertNotNull(result.getBody());
+    }
+
+    private BigDecimal mockOperacaoEntidadeSaldo() {
+        OperacaoEntidade operacao = OperacaoEntidade.builder().id(1L).numeroDaConta("12345").saldo(BigDecimal.valueOf(0)).build();
+        return operacao.getSaldo();
     }
 
     private OperacaoEntidade mockOperacaoEntidade() {

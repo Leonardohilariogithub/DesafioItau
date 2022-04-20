@@ -1,5 +1,6 @@
 package com.desafioItau.services;
 
+import com.desafioItau.dtos.ContaDto;
 import com.desafioItau.dtos.OperacaoDto;
 import com.desafioItau.entidades.ContaEntidade;
 import com.desafioItau.entidades.OperacaoEntidade;
@@ -18,9 +19,16 @@ import org.mockito.quality.Strictness;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
 import static com.desafioItau.enums.EnumOperacao.DEPOSITO;
+import static com.desafioItau.enums.EnumTipoDaConta.PESSOA_FISICA;
+import static java.util.stream.Stream.empty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.not;
+import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -89,7 +97,6 @@ class OperacaoServiceTest {
         //verify(producerOperacaoSaqueService, times(1)).send(any());
         verify(contaRepository, times(1)).save(any());
         verify(operacaoRepository, times(1)).save(any());
-
     }
 
     @Test
@@ -149,8 +156,22 @@ class OperacaoServiceTest {
     @Test
     void extrato() {
         OperacaoEntidade operacaoEntidade = new OperacaoEntidade();
+        //cenario
+        ContaDto contaDto = ContaDto.builder().id(1L).agencia("1515").numeroDaConta("12345").tipoDaConta(PESSOA_FISICA)
+                .digitoVerificador(5).clienteCpf("045.371.833.-73").saldo(BigDecimal.valueOf(0))
+                .saqueSemTaxa(5).aviso("conta criada com sucesso").build();
 
+        ContaEntidade contaEntidade = new ContaEntidade();
+        BeanUtils.copyProperties(contaDto, contaEntidade);
 
+        //execucao
+        when(operacaoRepository.findExtratoByNumeroDaConta(contaDto.getNumeroDaConta()))
+                .thenReturn(Collections.singletonList(operacaoEntidade));
+        List<OperacaoEntidade> operacoes = operacaoRepository.findAll();
+
+        //verificação
+        assertEquals(operacoes, is(not(empty())));
+        assertEquals(operacoes.get(0),is(equalTo(operacaoEntidade)));
     }
 
     private OperacaoDto operacaoDtoMockDeposito() {

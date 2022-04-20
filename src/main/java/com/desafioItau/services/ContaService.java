@@ -94,7 +94,8 @@ public class ContaService {
 
         //producerContaService.send(contaEntidade);//Kafka
 
-        return contaRepository.save(contaEntidade);
+        contaRepository.save(contaEntidade);
+        return contaEntidade;
     }
 
     public ContaEntidade save(ContaEntidade contaEntidade) {
@@ -182,6 +183,9 @@ public class ContaService {
         for (int i = 0; i < 4; i++) {
             numConta.append(random.nextInt(10));
         }
+//        while (contaRepository.findContaByNumeroDaConta(String.valueOf(numConta)) !=null) {
+//            gerarNumConta();
+//        }
         return String.valueOf(numConta);
     }
 }
