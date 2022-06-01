@@ -12,6 +12,7 @@ Desafio Banco Itaú | Feito com você
   <img align="center" alt="Rafa-Js" height="40" width="50" src="https://user-images.githubusercontent.com/44611131/136869740-c514d30e-d529-4167-a459-4fcd647cce19.png">
   <img align="center" alt="Rafa-Js" height="40" width="50" src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white">
   <img align="center" alt="Rafa-Js" height="40" width="50" src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white">
+  <img align="center" alt="Rafa-Js" height="40" width="50" src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white">
 </div>
 <div> 
   <a href="https://github.com/Leonardohilariogithub/" target="_blank"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" target="_blank"></a>   
